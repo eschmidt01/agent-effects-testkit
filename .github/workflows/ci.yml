@@ -95,7 +95,7 @@ jobs:
           /tmp/aet-install/bin/agent-effects demo --agent idempotent
       - name: Run installed-wheel clean-room workflow
         run: uv run --locked --extra dev python scripts/clean_room_acceptance.py dist/*.whl
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: distributions
           path: dist/*
