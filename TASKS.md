@@ -95,7 +95,7 @@ reproduce a deterministic side-effect failure without reading internals.
 - [x] Ruff check and format pass.
 - [x] Strict mypy passes without `type: ignore` in public core modules.
 - [x] Branch coverage is at least 90% for core modules.
-- [ ] Python 3.11, 3.12, and 3.13 pass in CI.
+- [x] Python 3.11, 3.12, and 3.13 pass in CI.
 - [x] `uv build` produces installable sdist and wheel artifacts.
 
 ### AE-008: Initial public repository preparation
@@ -115,7 +115,7 @@ without claiming remote-CI or release success.
 - [x] Remote-release and external-onboarding procedures are documented.
 - [x] A proposed LangGraph ADR exists without integration code or core dependency.
 - [x] The audited source is captured in one initial local import commit.
-- [ ] The exact candidate commit passes an observable GitHub Actions run.
+- [x] The exact candidate commit passes an observable GitHub Actions run.
 - [ ] The passing commit is tagged `v0.1.0a1` and published as an authorized
   GitHub prerelease.
 

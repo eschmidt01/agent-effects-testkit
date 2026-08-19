@@ -1,7 +1,7 @@
 # Implementation handoff
 
 Task: AE-003, AE-004, and minimum viable Phase 6
-Status: complete locally; observed remote CI and external quickstart timing open
+Status: local and remote CI complete; prerelease and external quickstart timing open
 
 Changed:
 
@@ -42,8 +42,8 @@ Decisions:
 
 Risks / unresolved:
 
-- no `.git` metadata or remote is present, so no workflow URL or commit SHA and
-  no observed remote CI result exist;
+- GitHub Actions run `32313536424` passed the complete Python 3.11–3.13,
+  quality, package, and clean-room matrix for commit `97e853b061a10686a835ead1a82d6a28ef528719`;
 - no external engineer has timed the quickstart;
 - installed registered reproducers execute code and are not sandboxed;
 - adapters still own redaction, agent execution limits, and test-environment isolation;
@@ -52,5 +52,5 @@ Risks / unresolved:
 
 Next:
 
-- establish Git/remote only with explicit authorization, observe the existing CI
-  matrix, and run one external onboarding session before starting LangGraph.
+- publish the authorized GitHub prerelease from an exact green commit, then run
+  one external onboarding session before starting LangGraph.

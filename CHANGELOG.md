@@ -33,6 +33,8 @@ changes with explicit migration notes.
   least-privilege GitHub Actions candidate workflow, and unexecuted remote
   release procedure
 - Proposed, implementation-gated ADR for an optional LangGraph integration
+- Public repository metadata and an observed Python 3.11–3.13 GitHub Actions
+  release matrix with package and installed-wheel clean-room validation
 
 ### Changed
 

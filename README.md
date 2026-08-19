@@ -68,8 +68,9 @@ side-effect behavior into a small deterministic test case.
 pre-production testing of AI-agent side effects. The core abstractions,
 structured runner lifecycle, portable schemas, hierarchical reduction, guarded
 starter projects, and integrity-checked failure bundles are implemented and
-tested locally. The remote-CI and external-adoption gates remain open; this is
-not a company-ready or generally production-ready claim. See
+tested locally. The Python 3.11–3.13 remote-CI matrix has passed; the GitHub
+prerelease and external-adoption gates remain open. This is not a company-ready
+or generally production-ready claim. See
 [`docs/RESEARCH_VALIDATION.md`](docs/RESEARCH_VALIDATION.md) and
 [`docs/RESEARCH_EVIDENCE.md`](docs/RESEARCH_EVIDENCE.md) for the online
 research behind this scope, [`VALIDATION_REPORT.md`](VALIDATION_REPORT.md)

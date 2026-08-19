@@ -7,7 +7,7 @@ developer experience.
 
 This report records commands that completed successfully in the implementation
 environment. It is not a claim of product-market fit, company readiness,
-production readiness, or a completed remote CI run.
+or production readiness.
 
 ## Source checks
 
@@ -89,13 +89,18 @@ The hierarchical sample is an intentional test/documentation fixture under
 
 ## Remaining release gates
 
-- No Git metadata or remote was present, so no actual GitHub Actions run, URL,
-  or commit SHA is available. The remote Python 3.11–3.13 CI gate remains open.
+- GitHub Actions run
+  [`32313536424`](https://github.com/eschmidt01/agent-effects-testkit/actions/runs/32313536424)
+  passed for commit `97e853b061a10686a835ead1a82d6a28ef528719`, including
+  Python 3.11, 3.12, and 3.13, quality, packaging, schema, bundle, and
+  installed-wheel clean-room jobs.
+- The annotated tag, GitHub prerelease, and public-release installation check
+  remain open until the final post-CI revision is validated.
 - An external engineer has not independently completed or timed the quickstart.
 - No design-partner or retained real-world regression evidence exists yet.
 - Reproducer code is installed code and still requires an appropriate external
   sandbox for untrusted adapters.
 
-The accurate status is: an experimental public-alpha candidate for deterministic
-pre-production testing of AI-agent side effects. It is not a generally
-production-ready release.
+The accurate pre-tag status is: an experimental public-alpha candidate for
+deterministic pre-production testing of AI-agent side effects. It is not a
+generally production-ready release.
