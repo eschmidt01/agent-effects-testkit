@@ -1,0 +1,31 @@
+name: Framework or world integration
+description: Propose an optional adapter with a deterministic reproduction.
+title: "integration: "
+labels: [integration]
+body:
+  - type: input
+    id: project
+    attributes:
+      label: Framework/environment and versions
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Side-effect failure to reproduce
+      description: Include commit position, retry/interruption source, and wrong final state.
+    validations:
+      required: true
+  - type: textarea
+    id: ci
+    attributes:
+      label: Credential-free CI strategy
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Adapter boundary
+      description: Explain how dependencies stay outside core and cases remain portable.
+    validations:
+      required: true

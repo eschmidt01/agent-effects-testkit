@@ -1,0 +1,109 @@
+name: Alpha adoption report
+description: Voluntarily share an early, structured Agent Effects Testkit trial.
+title: "alpha adoption: "
+labels: [alpha-feedback]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for trying the public-alpha candidate. This report is voluntary;
+        the toolkit sends no telemetry. Do not include secrets, customer data, or
+        unredacted failure bundles.
+  - type: input
+    id: installation
+    attributes:
+      label: Installation method
+      description: Built wheel, GitHub prerelease, source checkout, or another method.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Python version and platform
+      placeholder: Python 3.12.4 on Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: framework
+    attributes:
+      label: Agent framework, if any
+      description: Ordinary callable is a valid answer.
+  - type: input
+    id: effect
+    attributes:
+      label: Side effect tested
+      placeholder: Payment, email, ticket update, infrastructure mutation
+    validations:
+      required: true
+  - type: input
+    id: first_passing_contract
+    attributes:
+      label: Time to first passing contract
+      description: An estimate is useful; say not completed when applicable.
+  - type: input
+    id: first_failing_contract
+    attributes:
+      label: Time to first intentionally failing contract
+      description: An estimate is useful; say not completed when applicable.
+  - type: dropdown
+    id: commit_boundary
+    attributes:
+      label: Was commit-boundary instrumentation understandable?
+      options:
+        - "Yes"
+        - "Partly"
+        - "No"
+        - "Not attempted"
+    validations:
+      required: true
+  - type: textarea
+    id: state_modeling
+    attributes:
+      label: State reset and snapshotting
+      description: What was difficult, and approximately how much time did it take?
+  - type: dropdown
+    id: shrinking
+    attributes:
+      label: Did reduction produce a useful case?
+      options:
+        - "Yes"
+        - "Partly"
+        - "No"
+        - "No failing case to reduce"
+    validations:
+      required: true
+  - type: textarea
+    id: confusing
+    attributes:
+      label: Confusing documentation or diagnostics
+  - type: input
+    id: requested_integration
+    attributes:
+      label: Requested integration
+  - type: dropdown
+    id: unknown_defect
+    attributes:
+      label: Did the toolkit find a previously unknown defect?
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+  - type: dropdown
+    id: retained
+    attributes:
+      label: Did you retain the toolkit after the trial?
+      options:
+        - "Yes"
+        - "No"
+        - "Decision pending"
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed secrets, personal data, and production identifiers.
+          required: true

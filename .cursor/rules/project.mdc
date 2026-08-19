@@ -1,0 +1,10 @@
+---
+description: Agent Effects project invariants
+alwaysApply: true
+---
+
+Read and follow `AGENTS.md`. Implement one acceptance-tested item from
+`TASKS.md` at a time. Preserve framework neutrality, deterministic contracts,
+commit-aware faults, strictly reducing valid shrink candidates, and local
+failure artifacts. Do not add a broad agent framework, hosted dependency, or
+LLM judge to core.

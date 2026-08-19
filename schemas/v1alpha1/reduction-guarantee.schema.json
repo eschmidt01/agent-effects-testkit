@@ -1,0 +1,13 @@
+{
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/reduction-guarantee.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Scope of the minimality claim supported by a reduction report.",
+  "enum": [
+    "locally_minimal_under_configured_reducers",
+    "budget_limited_reduction",
+    "no_minimality_claim"
+  ],
+  "title": "ReductionGuarantee",
+  "type": "string",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

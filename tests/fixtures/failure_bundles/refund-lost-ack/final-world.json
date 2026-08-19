@@ -1,0 +1,72 @@
+{
+  "approvals": {
+    "pay-001": true
+  },
+  "customers": [
+    {
+      "email": "avery@example.test",
+      "id": "cus-001",
+      "medical_note": "synthetic test fixture",
+      "name": "Avery Chen",
+      "ssn": "000-00-0000"
+    }
+  ],
+  "noise": [
+    {
+      "id": "noise-000",
+      "value": 0
+    },
+    {
+      "id": "noise-001",
+      "value": 1
+    },
+    {
+      "id": "noise-002",
+      "value": 2
+    },
+    {
+      "id": "noise-003",
+      "value": 3
+    },
+    {
+      "id": "noise-004",
+      "value": 4
+    },
+    {
+      "id": "noise-005",
+      "value": 5
+    },
+    {
+      "id": "noise-006",
+      "value": 6
+    },
+    {
+      "id": "noise-007",
+      "value": 7
+    }
+  ],
+  "payments": [
+    {
+      "amount_cents": 5000,
+      "customer_id": "cus-001",
+      "id": "pay-001",
+      "status": "captured"
+    }
+  ],
+  "refunds": [
+    {
+      "amount_cents": 5000,
+      "id": "re_001",
+      "idempotency_key": "attempt-1",
+      "payment_id": "pay-001",
+      "status": "succeeded"
+    },
+    {
+      "amount_cents": 5000,
+      "id": "re_002",
+      "idempotency_key": "attempt-2",
+      "payment_id": "pay-001",
+      "status": "succeeded"
+    }
+  ]
+}

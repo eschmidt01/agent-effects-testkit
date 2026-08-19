@@ -1,0 +1,324 @@
+{
+  "$defs": {
+    "AdapterInfo": {
+      "additionalProperties": false,
+      "description": "Portable identity for the adapter used by a trial.",
+      "properties": {
+        "kind": {
+          "default": "python",
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "qualname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qualname"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AdapterInfo",
+      "type": "object"
+    },
+    "BundleFile": {
+      "additionalProperties": false,
+      "description": "One content-addressed payload in a portable failure bundle.",
+      "properties": {
+        "path": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "role": {
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "role",
+        "sha256",
+        "size"
+      ],
+      "title": "BundleFile",
+      "type": "object"
+    },
+    "ContractFailureIdentity": {
+      "additionalProperties": false,
+      "description": "Stable identity and multiplicity for one kind of contract violation.",
+      "properties": {
+        "contract_id": {
+          "minLength": 1,
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "count": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "violation_code": {
+          "minLength": 1,
+          "title": "Violation Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract_id",
+        "violation_code"
+      ],
+      "title": "ContractFailureIdentity",
+      "type": "object"
+    },
+    "FailureSignature": {
+      "additionalProperties": false,
+      "description": "Portable failure identity that excludes unstable diagnostic text.",
+      "properties": {
+        "contract_failures": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContractFailureIdentity"
+          },
+          "title": "Contract Failures",
+          "type": "array"
+        },
+        "exception_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exception Type"
+        },
+        "primary_category": {
+          "minLength": 1,
+          "title": "Primary Category",
+          "type": "string"
+        },
+        "primary_stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FailureStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema_version": {
+          "const": "agent-effects.signature/v1alpha1",
+          "default": "agent-effects.signature/v1alpha1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stable_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stable Error Code"
+        }
+      },
+      "required": [
+        "primary_category"
+      ],
+      "title": "FailureSignature",
+      "type": "object"
+    },
+    "FailureStage": {
+      "description": "Runner lifecycle stage at which a structured failure occurred.",
+      "enum": [
+        "world_creation",
+        "initial_snapshot",
+        "agent_execution",
+        "final_snapshot",
+        "contract_evaluation",
+        "cleanup",
+        "artifact_generation"
+      ],
+      "title": "FailureStage",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/failure-bundle-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Versioned, content-addressed index for a failure bundle.",
+  "properties": {
+    "adapter": {
+      "$ref": "#/$defs/AdapterInfo"
+    },
+    "case_id": {
+      "minLength": 1,
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Digest"
+    },
+    "contract_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Contract Ids",
+      "type": "array"
+    },
+    "created_at": {
+      "minLength": 1,
+      "title": "Created At",
+      "type": "string"
+    },
+    "failure_id": {
+      "pattern": "^[0-9a-f]{12}$",
+      "title": "Failure Id",
+      "type": "string"
+    },
+    "failure_signature": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FailureSignature"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/BundleFile"
+      },
+      "minItems": 1,
+      "title": "Files",
+      "type": "array"
+    },
+    "minimized": {
+      "description": "Whether a reduced case/report is included; this compatibility field does not assert global minimality.",
+      "title": "Minimized",
+      "type": "boolean"
+    },
+    "primary_failure_category": {
+      "minLength": 1,
+      "title": "Primary Failure Category",
+      "type": "string"
+    },
+    "reproducer_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reproducer Id"
+    },
+    "schema_version": {
+      "const": "agent-effects.failure/v1alpha1",
+      "default": "agent-effects.failure/v1alpha1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "signature": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Signature",
+      "type": "array"
+    },
+    "subject": {
+      "minLength": 1,
+      "title": "Subject",
+      "type": "string"
+    },
+    "test_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Test Ids",
+      "type": "array"
+    },
+    "toolkit_version": {
+      "minLength": 1,
+      "title": "Toolkit Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "toolkit_version",
+    "created_at",
+    "failure_id",
+    "case_id",
+    "subject",
+    "test_ids",
+    "contract_ids",
+    "adapter",
+    "primary_failure_category",
+    "signature",
+    "minimized",
+    "files"
+  ],
+  "title": "FailureBundleManifest",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

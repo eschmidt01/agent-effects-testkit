@@ -1,0 +1,30 @@
+name: Research evidence
+description: Add a public incident, practitioner discussion, or competitive finding.
+title: "research: "
+labels: [research]
+body:
+  - type: input
+    id: source
+    attributes:
+      label: Public source
+    validations:
+      required: true
+  - type: textarea
+    id: finding
+    attributes:
+      label: What it demonstrates
+    validations:
+      required: true
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Limitations or conflicts of interest
+      description: Note self-promotion, unverifiable claims, duplicates, or selection bias.
+    validations:
+      required: true
+  - type: textarea
+    id: implication
+    attributes:
+      label: Product or backlog implication
+    validations:
+      required: true

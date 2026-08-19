@@ -1,0 +1,83 @@
+{
+  "actor": {
+    "id": "ops-001",
+    "roles": [
+      "refund_operator"
+    ]
+  },
+  "faults": [
+    {
+      "metadata": {},
+      "mode": "timeout_after_commit",
+      "occurrence": 1,
+      "operation": "issue_refund"
+    }
+  ],
+  "goal": {
+    "amount_cents": 5000,
+    "payment_id": "pay-001",
+    "type": "refund_payment"
+  },
+  "id": "refund-lost-ack",
+  "metadata": {},
+  "schema_version": "agent-effects.case/v1alpha1",
+  "seed": 0,
+  "subject": "examples.refund",
+  "world": {
+    "approvals": {
+      "pay-001": true
+    },
+    "customers": [
+      {
+        "email": "avery@example.test",
+        "id": "cus-001",
+        "medical_note": "synthetic test fixture",
+        "name": "Avery Chen",
+        "ssn": "000-00-0000"
+      }
+    ],
+    "noise": [
+      {
+        "id": "noise-000",
+        "value": 0
+      },
+      {
+        "id": "noise-001",
+        "value": 1
+      },
+      {
+        "id": "noise-002",
+        "value": 2
+      },
+      {
+        "id": "noise-003",
+        "value": 3
+      },
+      {
+        "id": "noise-004",
+        "value": 4
+      },
+      {
+        "id": "noise-005",
+        "value": 5
+      },
+      {
+        "id": "noise-006",
+        "value": 6
+      },
+      {
+        "id": "noise-007",
+        "value": 7
+      }
+    ],
+    "payments": [
+      {
+        "amount_cents": 5000,
+        "customer_id": "cus-001",
+        "id": "pay-001",
+        "status": "captured"
+      }
+    ],
+    "refunds": []
+  }
+}

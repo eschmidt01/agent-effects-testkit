@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "EventKind": {
+      "enum": [
+        "agent",
+        "read",
+        "policy",
+        "tool_call",
+        "commit",
+        "idempotency_hit",
+        "fault",
+        "error"
+      ],
+      "title": "EventKind",
+      "type": "string"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/trace-event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Data",
+      "type": "object"
+    },
+    "kind": {
+      "$ref": "#/$defs/EventKind"
+    },
+    "operation": {
+      "minLength": 1,
+      "title": "Operation",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "sequence",
+    "kind",
+    "operation"
+  ],
+  "title": "TraceEvent",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

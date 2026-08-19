@@ -1,0 +1,40 @@
+name: Feature proposal
+description: Propose a focused testing, fault, contract, shrinker, or artifact capability.
+title: "proposal: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Concrete engineering problem
+      description: Describe the observed failure, not only the desired API.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Public issue, sanitized incident, failure bundle, or user workflow.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed testkit behavior
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Existing tools and alternatives considered
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Product-boundary check
+      options:
+        - label: This is not primarily agent orchestration, prompt scoring, hosted observability, or runtime transaction enforcement.
+          required: true
+        - label: The core use case can run locally and deterministically.
+          required: true

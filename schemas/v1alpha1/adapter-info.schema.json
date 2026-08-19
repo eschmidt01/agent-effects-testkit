@@ -1,0 +1,49 @@
+{
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/adapter-info.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Portable identity for the adapter used by a trial.",
+  "properties": {
+    "kind": {
+      "default": "python",
+      "minLength": 1,
+      "title": "Kind",
+      "type": "string"
+    },
+    "module": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Module"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "qualname": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Qualname"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "AdapterInfo",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

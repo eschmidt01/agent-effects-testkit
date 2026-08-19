@@ -1,0 +1,87 @@
+[
+  {
+    "data": {
+      "payment_id": "pay-001"
+    },
+    "kind": "read",
+    "operation": "get_payment",
+    "sequence": 0
+  },
+  {
+    "data": {
+      "approved": true,
+      "payment_id": "pay-001"
+    },
+    "kind": "read",
+    "operation": "check_approval",
+    "sequence": 1
+  },
+  {
+    "data": {
+      "actor_id": "ops-001",
+      "allowed": true
+    },
+    "kind": "policy",
+    "operation": "issue_refund",
+    "sequence": 2
+  },
+  {
+    "data": {
+      "amount_cents": 5000,
+      "idempotency_key": "attempt-1",
+      "occurrence": 1,
+      "payment_id": "pay-001"
+    },
+    "kind": "tool_call",
+    "operation": "issue_refund",
+    "sequence": 3
+  },
+  {
+    "data": {
+      "occurrence": 1,
+      "refund_id": "re_001"
+    },
+    "kind": "commit",
+    "operation": "issue_refund",
+    "sequence": 4
+  },
+  {
+    "data": {
+      "committed": true,
+      "mode": "timeout_after_commit",
+      "occurrence": 1
+    },
+    "kind": "fault",
+    "operation": "issue_refund",
+    "sequence": 5
+  },
+  {
+    "data": {
+      "actor_id": "ops-001",
+      "allowed": true
+    },
+    "kind": "policy",
+    "operation": "issue_refund",
+    "sequence": 6
+  },
+  {
+    "data": {
+      "amount_cents": 5000,
+      "idempotency_key": "attempt-2",
+      "occurrence": 2,
+      "payment_id": "pay-001"
+    },
+    "kind": "tool_call",
+    "operation": "issue_refund",
+    "sequence": 7
+  },
+  {
+    "data": {
+      "occurrence": 2,
+      "refund_id": "re_002"
+    },
+    "kind": "commit",
+    "operation": "issue_refund",
+    "sequence": 8
+  }
+]

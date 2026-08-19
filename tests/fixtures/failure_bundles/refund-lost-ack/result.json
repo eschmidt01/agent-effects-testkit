@@ -1,0 +1,354 @@
+{
+  "adapter": {
+    "kind": "python",
+    "module": "agent_effects.adapters.callable",
+    "name": "naive",
+    "qualname": "CallableAgentAdapter"
+  },
+  "agent_name": "naive",
+  "agent_run": {
+    "error_message": null,
+    "error_type": null,
+    "metadata": {},
+    "output": "Refund re_002 completed.",
+    "status": "completed"
+  },
+  "artifact_path": null,
+  "case": {
+    "actor": {
+      "id": "ops-001",
+      "roles": [
+        "refund_operator"
+      ]
+    },
+    "faults": [
+      {
+        "metadata": {},
+        "mode": "timeout_after_commit",
+        "occurrence": 1,
+        "operation": "issue_refund"
+      }
+    ],
+    "goal": {
+      "amount_cents": 5000,
+      "payment_id": "pay-001",
+      "type": "refund_payment"
+    },
+    "id": "refund-lost-ack",
+    "metadata": {},
+    "schema_version": "agent-effects.case/v1alpha1",
+    "seed": 0,
+    "subject": "examples.refund",
+    "world": {
+      "approvals": {
+        "pay-001": true
+      },
+      "customers": [
+        {
+          "email": "avery@example.test",
+          "id": "cus-001",
+          "medical_note": "synthetic test fixture",
+          "name": "Avery Chen",
+          "ssn": "000-00-0000"
+        }
+      ],
+      "noise": [
+        {
+          "id": "noise-000",
+          "value": 0
+        },
+        {
+          "id": "noise-001",
+          "value": 1
+        },
+        {
+          "id": "noise-002",
+          "value": 2
+        },
+        {
+          "id": "noise-003",
+          "value": 3
+        },
+        {
+          "id": "noise-004",
+          "value": 4
+        },
+        {
+          "id": "noise-005",
+          "value": 5
+        },
+        {
+          "id": "noise-006",
+          "value": 6
+        },
+        {
+          "id": "noise-007",
+          "value": 7
+        }
+      ],
+      "payments": [
+        {
+          "amount_cents": 5000,
+          "customer_id": "cus-001",
+          "id": "pay-001",
+          "status": "captured"
+        }
+      ],
+      "refunds": []
+    }
+  },
+  "contract_ids": [
+    "refund outcome",
+    "business uniqueness",
+    "least privilege reads"
+  ],
+  "contracts": {
+    "passed": false,
+    "violations": [
+      {
+        "code": "refund_cardinality",
+        "contract": "refund outcome",
+        "details": {
+          "actual": 2,
+          "expected": 1
+        },
+        "message": "The workflow must leave exactly one refund for the payment.",
+        "path": "$.refunds"
+      },
+      {
+        "code": "duplicate_business_effect",
+        "contract": "business uniqueness",
+        "details": {
+          "duplicate_keys": [
+            [
+              "pay-001",
+              5000
+            ]
+          ]
+        },
+        "message": "Multiple refund records represent the same business effect.",
+        "path": "$.refunds"
+      }
+    ]
+  },
+  "elapsed_ms": 0.329459086060524,
+  "events": [
+    {
+      "data": {
+        "payment_id": "pay-001"
+      },
+      "kind": "read",
+      "operation": "get_payment",
+      "sequence": 0
+    },
+    {
+      "data": {
+        "approved": true,
+        "payment_id": "pay-001"
+      },
+      "kind": "read",
+      "operation": "check_approval",
+      "sequence": 1
+    },
+    {
+      "data": {
+        "actor_id": "ops-001",
+        "allowed": true
+      },
+      "kind": "policy",
+      "operation": "issue_refund",
+      "sequence": 2
+    },
+    {
+      "data": {
+        "amount_cents": 5000,
+        "idempotency_key": "attempt-1",
+        "occurrence": 1,
+        "payment_id": "pay-001"
+      },
+      "kind": "tool_call",
+      "operation": "issue_refund",
+      "sequence": 3
+    },
+    {
+      "data": {
+        "occurrence": 1,
+        "refund_id": "re_001"
+      },
+      "kind": "commit",
+      "operation": "issue_refund",
+      "sequence": 4
+    },
+    {
+      "data": {
+        "committed": true,
+        "mode": "timeout_after_commit",
+        "occurrence": 1
+      },
+      "kind": "fault",
+      "operation": "issue_refund",
+      "sequence": 5
+    },
+    {
+      "data": {
+        "actor_id": "ops-001",
+        "allowed": true
+      },
+      "kind": "policy",
+      "operation": "issue_refund",
+      "sequence": 6
+    },
+    {
+      "data": {
+        "amount_cents": 5000,
+        "idempotency_key": "attempt-2",
+        "occurrence": 2,
+        "payment_id": "pay-001"
+      },
+      "kind": "tool_call",
+      "operation": "issue_refund",
+      "sequence": 7
+    },
+    {
+      "data": {
+        "occurrence": 2,
+        "refund_id": "re_002"
+      },
+      "kind": "commit",
+      "operation": "issue_refund",
+      "sequence": 8
+    }
+  ],
+  "final_state": {
+    "approvals": {
+      "pay-001": true
+    },
+    "customers": [
+      {
+        "email": "avery@example.test",
+        "id": "cus-001",
+        "medical_note": "synthetic test fixture",
+        "name": "Avery Chen",
+        "ssn": "000-00-0000"
+      }
+    ],
+    "noise": [
+      {
+        "id": "noise-000",
+        "value": 0
+      },
+      {
+        "id": "noise-001",
+        "value": 1
+      },
+      {
+        "id": "noise-002",
+        "value": 2
+      },
+      {
+        "id": "noise-003",
+        "value": 3
+      },
+      {
+        "id": "noise-004",
+        "value": 4
+      },
+      {
+        "id": "noise-005",
+        "value": 5
+      },
+      {
+        "id": "noise-006",
+        "value": 6
+      },
+      {
+        "id": "noise-007",
+        "value": 7
+      }
+    ],
+    "payments": [
+      {
+        "amount_cents": 5000,
+        "customer_id": "cus-001",
+        "id": "pay-001",
+        "status": "captured"
+      }
+    ],
+    "refunds": [
+      {
+        "amount_cents": 5000,
+        "id": "re_001",
+        "idempotency_key": "attempt-1",
+        "payment_id": "pay-001",
+        "status": "succeeded"
+      },
+      {
+        "amount_cents": 5000,
+        "id": "re_002",
+        "idempotency_key": "attempt-2",
+        "payment_id": "pay-001",
+        "status": "succeeded"
+      }
+    ]
+  },
+  "initial_state": {
+    "approvals": {
+      "pay-001": true
+    },
+    "customers": [
+      {
+        "email": "avery@example.test",
+        "id": "cus-001",
+        "medical_note": "synthetic test fixture",
+        "name": "Avery Chen",
+        "ssn": "000-00-0000"
+      }
+    ],
+    "noise": [
+      {
+        "id": "noise-000",
+        "value": 0
+      },
+      {
+        "id": "noise-001",
+        "value": 1
+      },
+      {
+        "id": "noise-002",
+        "value": 2
+      },
+      {
+        "id": "noise-003",
+        "value": 3
+      },
+      {
+        "id": "noise-004",
+        "value": 4
+      },
+      {
+        "id": "noise-005",
+        "value": 5
+      },
+      {
+        "id": "noise-006",
+        "value": 6
+      },
+      {
+        "id": "noise-007",
+        "value": 7
+      }
+    ],
+    "payments": [
+      {
+        "amount_cents": 5000,
+        "customer_id": "cus-001",
+        "id": "pay-001",
+        "status": "captured"
+      }
+    ],
+    "refunds": []
+  },
+  "lifecycle_failures": [],
+  "reproducer_id": "agent-effects.examples.refund/naive/v1",
+  "schema_version": "agent-effects.result/v1alpha1"
+}

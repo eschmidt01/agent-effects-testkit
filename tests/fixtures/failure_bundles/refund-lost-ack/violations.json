@@ -1,0 +1,26 @@
+[
+  {
+    "code": "refund_cardinality",
+    "contract": "refund outcome",
+    "details": {
+      "actual": 2,
+      "expected": 1
+    },
+    "message": "The workflow must leave exactly one refund for the payment.",
+    "path": "$.refunds"
+  },
+  {
+    "code": "duplicate_business_effect",
+    "contract": "business uniqueness",
+    "details": {
+      "duplicate_keys": [
+        [
+          "pay-001",
+          5000
+        ]
+      ]
+    },
+    "message": "Multiple refund records represent the same business effect.",
+    "path": "$.refunds"
+  }
+]

@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+      - run: uv sync --locked --extra dev
+      - run: uv run pytest --cov=agent_effects --cov-report=term-missing
+      - run: uv run python -m compileall -q src tests examples scripts
+      - name: Installed-wheel smoke test
+        shell: bash
+        run: |
+          uv build --wheel --out-dir /tmp/aet-wheel
+          uv venv --python "${{ matrix.python-version }}" /tmp/aet-wheel-install
+          uv pip install --python /tmp/aet-wheel-install/bin/python /tmp/aet-wheel/*.whl
+          /tmp/aet-wheel-install/bin/python -c "import agent_effects, importlib.metadata; assert importlib.metadata.version('agent-effects-testkit') == agent_effects.__version__ == '0.1.0a1'"
+          /tmp/aet-wheel-install/bin/agent-effects doctor
+      - name: Exercise expected failing demo
+        shell: bash
+        run: |
+          set +e
+          uv run agent-effects demo --agent naive --output /tmp/aet-failures
+          status=$?
+          set -e
+          test "$status" -eq 1
+      - run: uv run agent-effects demo --agent idempotent
+      - run: uv run agent-effects demo --agent reconcile
+
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - run: uv sync --locked --extra dev --extra docs
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy --strict src tests
+      - run: uv run mkdocs build --strict
+      - name: Prove schema export determinism
+        run: uv run pytest -q tests/test_schemas.py::test_schema_export_is_deterministic_and_matches_checked_in_fixtures
+      - name: Verify the checked-in bundle fixture
+        run: uv run pytest -q tests/test_artifacts.py::test_checked_in_hierarchical_sample_has_typed_identity_and_report
+
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - run: uv build
+      - run: uv run --locked --extra dev twine check dist/*
+      - name: Install wheel into clean environment
+        shell: bash
+        run: |
+          uv venv /tmp/aet-install
+          uv pip install --python /tmp/aet-install/bin/python dist/*.whl
+          /tmp/aet-install/bin/agent-effects doctor
+          /tmp/aet-install/bin/agent-effects demo --agent idempotent
+      - name: Run installed-wheel clean-room workflow
+        run: uv run --locked --extra dev python scripts/clean_room_acceptance.py dist/*.whl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/*

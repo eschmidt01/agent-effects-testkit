@@ -1,0 +1,183 @@
+{
+  "$defs": {
+    "FaultMode": {
+      "description": "Where a simulated failure occurs relative to a business commit.",
+      "enum": [
+        "timeout_before",
+        "timeout_after_commit"
+      ],
+      "title": "FaultMode",
+      "type": "string"
+    },
+    "FaultRule": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "mode": {
+          "$ref": "#/$defs/FaultMode"
+        },
+        "occurrence": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "operation": {
+          "minLength": 1,
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation",
+        "mode"
+      ],
+      "title": "FaultRule",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ShrinkStep": {
+      "additionalProperties": false,
+      "properties": {
+        "after_size": {
+          "minimum": 0,
+          "title": "After Size",
+          "type": "integer"
+        },
+        "before_size": {
+          "minimum": 0,
+          "title": "Before Size",
+          "type": "integer"
+        },
+        "reducer": {
+          "title": "Reducer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reducer",
+        "before_size",
+        "after_size"
+      ],
+      "title": "ShrinkStep",
+      "type": "object"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "description": "Portable input to one agent trial.\n\n``world`` contains domain-specific initial state. The framework deliberately\nkeeps this as JSON so adapters can target databases, HTTP sandboxes, MCP\nservers, or in-memory fakes without inheriting a framework data model.",
+      "properties": {
+        "actor": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Actor",
+          "type": "object"
+        },
+        "faults": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FaultRule"
+          },
+          "title": "Faults",
+          "type": "array"
+        },
+        "goal": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Goal",
+          "type": "object"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "agent-effects.case/v1alpha1",
+          "default": "agent-effects.case/v1alpha1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "default": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "subject": {
+          "default": "unspecified",
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "world": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "World",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/shrink-report.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_steps": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ShrinkStep"
+      },
+      "title": "Accepted Steps",
+      "type": "array"
+    },
+    "evaluations": {
+      "minimum": 0,
+      "title": "Evaluations",
+      "type": "integer"
+    },
+    "minimized": {
+      "$ref": "#/$defs/TestCase"
+    },
+    "original": {
+      "$ref": "#/$defs/TestCase"
+    },
+    "target_signature": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Signature",
+      "type": "array"
+    }
+  },
+  "required": [
+    "original",
+    "minimized",
+    "target_signature",
+    "evaluations"
+  ],
+  "title": "ShrinkReport",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

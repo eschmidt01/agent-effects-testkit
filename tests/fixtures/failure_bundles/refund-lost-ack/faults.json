@@ -1,0 +1,8 @@
+[
+  {
+    "metadata": {},
+    "mode": "timeout_after_commit",
+    "occurrence": 1,
+    "operation": "issue_refund"
+  }
+]

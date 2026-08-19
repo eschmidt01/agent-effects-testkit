@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "FailureCategory": {
+      "description": "High-level ownership category for a runner lifecycle failure.",
+      "enum": [
+        "infrastructure",
+        "agent",
+        "contract",
+        "artifact"
+      ],
+      "title": "FailureCategory",
+      "type": "string"
+    },
+    "FailureStage": {
+      "description": "Runner lifecycle stage at which a structured failure occurred.",
+      "enum": [
+        "world_creation",
+        "initial_snapshot",
+        "agent_execution",
+        "final_snapshot",
+        "contract_evaluation",
+        "cleanup",
+        "artifact_generation"
+      ],
+      "title": "FailureStage",
+      "type": "string"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/lifecycle-failure.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Typed failure captured while the runner advances through its lifecycle.",
+  "properties": {
+    "category": {
+      "$ref": "#/$defs/FailureCategory"
+    },
+    "details": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Details",
+      "type": "object"
+    },
+    "exception_type": {
+      "minLength": 1,
+      "title": "Exception Type",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "primary": {
+      "title": "Primary",
+      "type": "boolean"
+    },
+    "stage": {
+      "$ref": "#/$defs/FailureStage"
+    }
+  },
+  "required": [
+    "stage",
+    "category",
+    "exception_type",
+    "message",
+    "primary"
+  ],
+  "title": "LifecycleFailure",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

@@ -1,0 +1,123 @@
+{
+  "adapter": {
+    "kind": "python",
+    "module": "agent_effects.adapters.callable",
+    "name": "naive",
+    "qualname": "CallableAgentAdapter"
+  },
+  "case_id": "refund-lost-ack",
+  "content_digest": "56a97f64e183057a5351062be857d8266bcfa8e3077cbbbfa5e525e1f537b994",
+  "contract_ids": [
+    "refund outcome",
+    "business uniqueness",
+    "least privilege reads"
+  ],
+  "created_at": "2026-08-19T22:46:54.436915+00:00",
+  "failure_id": "56a97f64e183",
+  "failure_signature": {
+    "contract_failures": [
+      {
+        "contract_id": "business uniqueness",
+        "count": 1,
+        "violation_code": "duplicate_business_effect"
+      },
+      {
+        "contract_id": "refund outcome",
+        "count": 1,
+        "violation_code": "refund_cardinality"
+      }
+    ],
+    "exception_type": null,
+    "primary_category": "contract",
+    "primary_stage": null,
+    "schema_version": "agent-effects.signature/v1alpha1",
+    "stable_error_code": null
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "role": "legacy_readme",
+      "sha256": "5c5e6b75c661f6da6f278fc3c467f3674db8229aa1efbe389f05b95982d14a52",
+      "size": 246
+    },
+    {
+      "path": "case.json",
+      "role": "original_case",
+      "sha256": "15df2d2af76c13bf0c85e67754c5da95a972a516dcaa0c31ba32cfdf2c2a77b4",
+      "size": 1460
+    },
+    {
+      "path": "faults.json",
+      "role": "fault_schedule",
+      "sha256": "09cef752f877d7a044dde4eeffb1e13dfe8259cfaf3e75a71e3ce3221d27593a",
+      "size": 121
+    },
+    {
+      "path": "final-world.json",
+      "role": "final_world",
+      "sha256": "f9d036736fb9180ef0c93bd4ede50e5c28e2d83ff1b2392c2dd84a998a817e3a",
+      "size": 1181
+    },
+    {
+      "path": "initial-world.json",
+      "role": "initial_world",
+      "sha256": "1fc4efc1d71dd436adab430de8d9321165a24abcc9db033e77d723dbaf0a5352",
+      "size": 859
+    },
+    {
+      "path": "minimized-case.json",
+      "role": "minimized_case",
+      "sha256": "833bc3c13660dfa83c84a7a02dba88412b9618814dc3ba60f7014d38d0e70e83",
+      "size": 952
+    },
+    {
+      "path": "reduction-report.json",
+      "role": "reduction_report",
+      "sha256": "8684aed7b39b799e07d6728da1f3d0f36e604935136bb1eb25d0dc3dce7233eb",
+      "size": 8404
+    },
+    {
+      "path": "reproduce.md",
+      "role": "reproduction_instructions",
+      "sha256": "4b6cb234a8012987a2731b6077d2ff63ea12481550f4ea4bf59cc3184e9c6e67",
+      "size": 392
+    },
+    {
+      "path": "result.json",
+      "role": "trial_result",
+      "sha256": "61156e26cf13e42a4d8ffa58f13606c5c5ed3d6fa42d8dfe7354457b78d72b09",
+      "size": 7050
+    },
+    {
+      "path": "trace.json",
+      "role": "trace",
+      "sha256": "c2cbd37a55ce3eae5d38f11fc2b31dafbd0f12fc06f2d110b8dd0fc88712aced",
+      "size": 1543
+    },
+    {
+      "path": "trace.jsonl",
+      "role": "legacy_trace",
+      "sha256": "0ed7989ad7b1e01aabf4e674d3bf4f89af92f7799975949559ce2d48a75d12e9",
+      "size": 1049
+    },
+    {
+      "path": "violations.json",
+      "role": "violations",
+      "sha256": "e5250f2aa112514a6d5ff62b2ea2e4508be6815f2d4efd08f3f023ffa96a493a",
+      "size": 550
+    }
+  ],
+  "minimized": true,
+  "primary_failure_category": "contract",
+  "reproducer_id": "agent-effects.examples.refund/naive/v1",
+  "schema_version": "agent-effects.failure/v1alpha1",
+  "signature": [
+    "duplicate_business_effect",
+    "refund_cardinality"
+  ],
+  "subject": "examples.refund",
+  "test_ids": [
+    "refund-lost-ack"
+  ],
+  "toolkit_version": "0.1.0a1"
+}

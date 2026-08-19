@@ -1,0 +1,321 @@
+{
+  "accepted_reductions": [
+    {
+      "after_digest": "3eb537ee6f290ead369b77930456996936f69fed748724e4826c34da1e4d47e2",
+      "after_size": 763,
+      "before_digest": "e8f2c3b4fbe88a7d53c76cced700c2bde52c59bbb25bef9814837be8672e1c5b",
+      "before_size": 879,
+      "explanation": "removed list indices (0, 1, 2, 3) at world('noise',)",
+      "reducer": "world_list_ddmin"
+    },
+    {
+      "after_digest": "4dda59591af507e7006b1384b53a32bffaf2da843f064d545d1f465820e04166",
+      "after_size": 705,
+      "before_digest": "3eb537ee6f290ead369b77930456996936f69fed748724e4826c34da1e4d47e2",
+      "before_size": 763,
+      "explanation": "removed list indices (0, 1) at world('noise',)",
+      "reducer": "world_list_ddmin"
+    },
+    {
+      "after_digest": "f2b7a29024cb2fdd1f82ce097d4195d44f1a236c70a63f2e48eb27a4e20e99cc",
+      "after_size": 676,
+      "before_digest": "4dda59591af507e7006b1384b53a32bffaf2da843f064d545d1f465820e04166",
+      "before_size": 705,
+      "explanation": "removed list indices (0,) at world('noise',)",
+      "reducer": "world_list_ddmin"
+    },
+    {
+      "after_digest": "d0bd5b7021afa74e007aff020125089f58c02d6fd44f21a56b72474814f2cf85",
+      "after_size": 648,
+      "before_digest": "f2b7a29024cb2fdd1f82ce097d4195d44f1a236c70a63f2e48eb27a4e20e99cc",
+      "before_size": 676,
+      "explanation": "removed list indices (0,) at world('noise',)",
+      "reducer": "world_list_ddmin"
+    }
+  ],
+  "baseline_observations": [
+    {
+      "signature": {
+        "contract_failures": [
+          {
+            "contract_id": "business uniqueness",
+            "count": 1,
+            "violation_code": "duplicate_business_effect"
+          },
+          {
+            "contract_id": "refund outcome",
+            "count": 1,
+            "violation_code": "refund_cardinality"
+          }
+        ],
+        "exception_type": null,
+        "primary_category": "contract",
+        "primary_stage": null,
+        "schema_version": "agent-effects.signature/v1alpha1",
+        "stable_error_code": null
+      },
+      "trace": [
+        {
+          "data": {
+            "payment_id": "pay-001"
+          },
+          "kind": "read",
+          "operation": "get_payment",
+          "sequence": 0
+        },
+        {
+          "data": {
+            "approved": true,
+            "payment_id": "pay-001"
+          },
+          "kind": "read",
+          "operation": "check_approval",
+          "sequence": 1
+        },
+        {
+          "data": {
+            "actor_id": "ops-001",
+            "allowed": true
+          },
+          "kind": "policy",
+          "operation": "issue_refund",
+          "sequence": 2
+        },
+        {
+          "data": {
+            "amount_cents": 5000,
+            "idempotency_key": "attempt-1",
+            "occurrence": 1,
+            "payment_id": "pay-001"
+          },
+          "kind": "tool_call",
+          "operation": "issue_refund",
+          "sequence": 3
+        },
+        {
+          "data": {
+            "occurrence": 1,
+            "refund_id": "re_001"
+          },
+          "kind": "commit",
+          "operation": "issue_refund",
+          "sequence": 4
+        },
+        {
+          "data": {
+            "committed": true,
+            "mode": "timeout_after_commit",
+            "occurrence": 1
+          },
+          "kind": "fault",
+          "operation": "issue_refund",
+          "sequence": 5
+        },
+        {
+          "data": {
+            "actor_id": "ops-001",
+            "allowed": true
+          },
+          "kind": "policy",
+          "operation": "issue_refund",
+          "sequence": 6
+        },
+        {
+          "data": {
+            "amount_cents": 5000,
+            "idempotency_key": "attempt-2",
+            "occurrence": 2,
+            "payment_id": "pay-001"
+          },
+          "kind": "tool_call",
+          "operation": "issue_refund",
+          "sequence": 7
+        },
+        {
+          "data": {
+            "occurrence": 2,
+            "refund_id": "re_002"
+          },
+          "kind": "commit",
+          "operation": "issue_refund",
+          "sequence": 8
+        }
+      ]
+    }
+  ],
+  "cache_hits": 1,
+  "candidate_evaluations": 5,
+  "confirm_signature_runs": 1,
+  "diagnostic": "No smaller valid same-signature candidate was found by the configured reducers within the configured budgets. This is a local guarantee over generated candidates, not a claim of global minimality.",
+  "different_failures": 2,
+  "elapsed_ms": 3.3973329700529575,
+  "evaluation_budget": 250,
+  "evaluation_budget_exhausted": false,
+  "final_case_digest": "d0bd5b7021afa74e007aff020125089f58c02d6fd44f21a56b72474814f2cf85",
+  "final_size": 648,
+  "guarantee": "locally_minimal_under_configured_reducers",
+  "initial_case_digest": "e8f2c3b4fbe88a7d53c76cced700c2bde52c59bbb25bef9814837be8672e1c5b",
+  "initial_size": 879,
+  "invalid_candidates_skipped": 0,
+  "minimized": {
+    "actor": {
+      "id": "ops-001",
+      "roles": [
+        "refund_operator"
+      ]
+    },
+    "faults": [
+      {
+        "metadata": {},
+        "mode": "timeout_after_commit",
+        "occurrence": 1,
+        "operation": "issue_refund"
+      }
+    ],
+    "goal": {
+      "amount_cents": 5000,
+      "payment_id": "pay-001",
+      "type": "refund_payment"
+    },
+    "id": "refund-lost-ack",
+    "metadata": {},
+    "schema_version": "agent-effects.case/v1alpha1",
+    "seed": 0,
+    "subject": "examples.refund",
+    "world": {
+      "approvals": {
+        "pay-001": true
+      },
+      "customers": [
+        {
+          "email": "avery@example.test",
+          "id": "cus-001",
+          "medical_note": "synthetic test fixture",
+          "name": "Avery Chen",
+          "ssn": "000-00-0000"
+        }
+      ],
+      "noise": [],
+      "payments": [
+        {
+          "amount_cents": 5000,
+          "customer_id": "cus-001",
+          "id": "pay-001",
+          "status": "captured"
+        }
+      ],
+      "refunds": []
+    }
+  },
+  "original": {
+    "actor": {
+      "id": "ops-001",
+      "roles": [
+        "refund_operator"
+      ]
+    },
+    "faults": [
+      {
+        "metadata": {},
+        "mode": "timeout_after_commit",
+        "occurrence": 1,
+        "operation": "issue_refund"
+      }
+    ],
+    "goal": {
+      "amount_cents": 5000,
+      "payment_id": "pay-001",
+      "type": "refund_payment"
+    },
+    "id": "refund-lost-ack",
+    "metadata": {},
+    "schema_version": "agent-effects.case/v1alpha1",
+    "seed": 0,
+    "subject": "examples.refund",
+    "world": {
+      "approvals": {
+        "pay-001": true
+      },
+      "customers": [
+        {
+          "email": "avery@example.test",
+          "id": "cus-001",
+          "medical_note": "synthetic test fixture",
+          "name": "Avery Chen",
+          "ssn": "000-00-0000"
+        }
+      ],
+      "noise": [
+        {
+          "id": "noise-000",
+          "value": 0
+        },
+        {
+          "id": "noise-001",
+          "value": 1
+        },
+        {
+          "id": "noise-002",
+          "value": 2
+        },
+        {
+          "id": "noise-003",
+          "value": 3
+        },
+        {
+          "id": "noise-004",
+          "value": 4
+        },
+        {
+          "id": "noise-005",
+          "value": 5
+        },
+        {
+          "id": "noise-006",
+          "value": 6
+        },
+        {
+          "id": "noise-007",
+          "value": 7
+        }
+      ],
+      "payments": [
+        {
+          "amount_cents": 5000,
+          "customer_id": "cus-001",
+          "id": "pay-001",
+          "status": "captured"
+        }
+      ],
+      "refunds": []
+    }
+  },
+  "reducers_used": [
+    "world_list_ddmin",
+    "fault_schedule_ddmin"
+  ],
+  "schema_version": "agent-effects.reduction/v1alpha1",
+  "stop_reason": "locally_minimal",
+  "target_signature": {
+    "contract_failures": [
+      {
+        "contract_id": "business uniqueness",
+        "count": 1,
+        "violation_code": "duplicate_business_effect"
+      },
+      {
+        "contract_id": "refund outcome",
+        "count": 1,
+        "violation_code": "refund_cardinality"
+      }
+    ],
+    "exception_type": null,
+    "primary_category": "contract",
+    "primary_stage": null,
+    "schema_version": "agent-effects.signature/v1alpha1",
+    "stable_error_code": null
+  },
+  "time_budget_exhausted": false,
+  "time_budget_ms": null,
+  "validity_predicate": "agent-effects.examples.refund/is_valid_refund_case/v1"
+}

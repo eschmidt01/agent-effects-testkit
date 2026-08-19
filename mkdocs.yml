@@ -1,0 +1,39 @@
+site_name: Agent Effects Testkit
+site_description: Commit-aware semantic fault testing for side-effecting AI agents
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Getting started: GETTING_STARTED.md
+  - Wrap a callable: WRAPPING_CALLABLES.md
+  - Commit boundaries: COMMIT_BOUNDARIES.md
+  - Contracts: CONTRACTS.md
+  - Failure signatures: FAILURE_SIGNATURES.md
+  - Shrinking: SHRINKING.md
+  - Troubleshooting: TROUBLESHOOTING.md
+  - Alpha feedback: ALPHA_FEEDBACK.md
+  - External onboarding: EXTERNAL_ONBOARDING.md
+  - Remote release procedure: REMOTE_RELEASE.md
+  - Research validation: RESEARCH_VALIDATION.md
+  - Public evidence: RESEARCH_EVIDENCE.md
+  - Product specification: PRODUCT_SPEC.md
+  - Architecture: ARCHITECTURE.md
+  - Integration guide: INTEGRATION_GUIDE.md
+  - Runner lifecycle: RUNNER_LIFECYCLE.md
+  - Schema versioning: SCHEMA_VERSIONING.md
+  - Failure bundles: FAILURE_BUNDLE_SPEC.md
+  - Testing strategy: TESTING_STRATEGY.md
+  - Threat model: THREAT_MODEL.md
+  - Repository security audit: SECURITY_AUDIT.md
+  - Competitive landscape: COMPETITIVE_LANDSCAPE.md
+  - Roadmap: ROADMAP.md
+  - Branding: BRANDING.md
+  - ADRs:
+      - Narrow product scope: adr/0001-narrow-side-effect-testing.md
+      - Outcome contracts: adr/0002-outcome-contracts-not-exact-traces.md
+      - Commit-aware faults: adr/0003-commit-aware-faults.md
+      - Valid shrinking: adr/0004-validity-preserving-shrinking.md
+      - Future LangGraph integration: adr/0005-future-langgraph-integration.md
+  - Agent handoff: agent/HANDOFF.md

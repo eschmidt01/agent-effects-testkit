@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "ContractFailureIdentity": {
+      "additionalProperties": false,
+      "description": "Stable identity and multiplicity for one kind of contract violation.",
+      "properties": {
+        "contract_id": {
+          "minLength": 1,
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "count": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "violation_code": {
+          "minLength": 1,
+          "title": "Violation Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract_id",
+        "violation_code"
+      ],
+      "title": "ContractFailureIdentity",
+      "type": "object"
+    },
+    "FailureStage": {
+      "description": "Runner lifecycle stage at which a structured failure occurred.",
+      "enum": [
+        "world_creation",
+        "initial_snapshot",
+        "agent_execution",
+        "final_snapshot",
+        "contract_evaluation",
+        "cleanup",
+        "artifact_generation"
+      ],
+      "title": "FailureStage",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/failure-signature.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Portable failure identity that excludes unstable diagnostic text.",
+  "properties": {
+    "contract_failures": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContractFailureIdentity"
+      },
+      "title": "Contract Failures",
+      "type": "array"
+    },
+    "exception_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exception Type"
+    },
+    "primary_category": {
+      "minLength": 1,
+      "title": "Primary Category",
+      "type": "string"
+    },
+    "primary_stage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FailureStage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "const": "agent-effects.signature/v1alpha1",
+      "default": "agent-effects.signature/v1alpha1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stable_error_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stable Error Code"
+    }
+  },
+  "required": [
+    "primary_category"
+  ],
+  "title": "FailureSignature",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

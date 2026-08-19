@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "FaultMode": {
+      "description": "Where a simulated failure occurs relative to a business commit.",
+      "enum": [
+        "timeout_before",
+        "timeout_after_commit"
+      ],
+      "title": "FaultMode",
+      "type": "string"
+    },
+    "FaultRule": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "mode": {
+          "$ref": "#/$defs/FaultMode"
+        },
+        "occurrence": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "operation": {
+          "minLength": 1,
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation",
+        "mode"
+      ],
+      "title": "FaultRule",
+      "type": "object"
+    },
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/fault-schedule.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "items": {
+    "$ref": "#/$defs/FaultRule"
+  },
+  "type": "array",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

@@ -1,0 +1,65 @@
+name: Bug report
+description: Report incorrect testkit behavior with a concise synthetic case.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include production data, secrets, or private failure bundles.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - faults
+        - runner
+        - contracts
+        - shrinking
+        - artifacts
+        - pytest/CLI
+        - integration
+        - documentation
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Concise synthetic reproduction
+      description: Include a case, fault schedule, agent behavior, and command.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Python, OS, framework versions, and relevant extras.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I removed secrets and personal/production data.
+          required: true
+        - label: I searched existing issues and TASKS.md.
+          required: true

@@ -1,0 +1,12 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/goal.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": {
+    "$ref": "#/$defs/JsonValue"
+  },
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}

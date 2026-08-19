@@ -1,0 +1,524 @@
+{
+  "$defs": {
+    "ContractFailureIdentity": {
+      "additionalProperties": false,
+      "description": "Stable identity and multiplicity for one kind of contract violation.",
+      "properties": {
+        "contract_id": {
+          "minLength": 1,
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "count": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "violation_code": {
+          "minLength": 1,
+          "title": "Violation Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract_id",
+        "violation_code"
+      ],
+      "title": "ContractFailureIdentity",
+      "type": "object"
+    },
+    "EventKind": {
+      "enum": [
+        "agent",
+        "read",
+        "policy",
+        "tool_call",
+        "commit",
+        "idempotency_hit",
+        "fault",
+        "error"
+      ],
+      "title": "EventKind",
+      "type": "string"
+    },
+    "FailureSignature": {
+      "additionalProperties": false,
+      "description": "Portable failure identity that excludes unstable diagnostic text.",
+      "properties": {
+        "contract_failures": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContractFailureIdentity"
+          },
+          "title": "Contract Failures",
+          "type": "array"
+        },
+        "exception_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exception Type"
+        },
+        "primary_category": {
+          "minLength": 1,
+          "title": "Primary Category",
+          "type": "string"
+        },
+        "primary_stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FailureStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "schema_version": {
+          "const": "agent-effects.signature/v1alpha1",
+          "default": "agent-effects.signature/v1alpha1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stable_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stable Error Code"
+        }
+      },
+      "required": [
+        "primary_category"
+      ],
+      "title": "FailureSignature",
+      "type": "object"
+    },
+    "FailureStage": {
+      "description": "Runner lifecycle stage at which a structured failure occurred.",
+      "enum": [
+        "world_creation",
+        "initial_snapshot",
+        "agent_execution",
+        "final_snapshot",
+        "contract_evaluation",
+        "cleanup",
+        "artifact_generation"
+      ],
+      "title": "FailureStage",
+      "type": "string"
+    },
+    "FaultMode": {
+      "description": "Where a simulated failure occurs relative to a business commit.",
+      "enum": [
+        "timeout_before",
+        "timeout_after_commit"
+      ],
+      "title": "FaultMode",
+      "type": "string"
+    },
+    "FaultRule": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "mode": {
+          "$ref": "#/$defs/FaultMode"
+        },
+        "occurrence": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Occurrence",
+          "type": "integer"
+        },
+        "operation": {
+          "minLength": 1,
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation",
+        "mode"
+      ],
+      "title": "FaultRule",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ReductionGuarantee": {
+      "description": "Scope of the minimality claim supported by a reduction report.",
+      "enum": [
+        "locally_minimal_under_configured_reducers",
+        "budget_limited_reduction",
+        "no_minimality_claim"
+      ],
+      "title": "ReductionGuarantee",
+      "type": "string"
+    },
+    "ReductionObservation": {
+      "additionalProperties": false,
+      "description": "One baseline observation retained when stability is checked.",
+      "properties": {
+        "signature": {
+          "$ref": "#/$defs/FailureSignature"
+        },
+        "trace": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TraceEvent"
+          },
+          "title": "Trace",
+          "type": "array"
+        }
+      },
+      "required": [
+        "signature"
+      ],
+      "title": "ReductionObservation",
+      "type": "object"
+    },
+    "ReductionStep": {
+      "additionalProperties": false,
+      "description": "One accepted, strictly complexity-reducing candidate.",
+      "properties": {
+        "after_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "After Digest",
+          "type": "string"
+        },
+        "after_size": {
+          "minimum": 0,
+          "title": "After Size",
+          "type": "integer"
+        },
+        "before_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Before Digest",
+          "type": "string"
+        },
+        "before_size": {
+          "minimum": 0,
+          "title": "Before Size",
+          "type": "integer"
+        },
+        "explanation": {
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "reducer": {
+          "minLength": 1,
+          "title": "Reducer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reducer",
+        "explanation",
+        "before_digest",
+        "after_digest",
+        "before_size",
+        "after_size"
+      ],
+      "title": "ReductionStep",
+      "type": "object"
+    },
+    "ReductionStopReason": {
+      "description": "Why reduction stopped; current writers never emit legacy ``minimal``.",
+      "enum": [
+        "locally_minimal",
+        "evaluation_budget_exhausted",
+        "time_budget_exhausted",
+        "unstable_baseline",
+        "invalid_baseline",
+        "baseline_did_not_reproduce",
+        "minimal"
+      ],
+      "title": "ReductionStopReason",
+      "type": "string"
+    },
+    "TestCase": {
+      "additionalProperties": false,
+      "description": "Portable input to one agent trial.\n\n``world`` contains domain-specific initial state. The framework deliberately\nkeeps this as JSON so adapters can target databases, HTTP sandboxes, MCP\nservers, or in-memory fakes without inheriting a framework data model.",
+      "properties": {
+        "actor": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Actor",
+          "type": "object"
+        },
+        "faults": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FaultRule"
+          },
+          "title": "Faults",
+          "type": "array"
+        },
+        "goal": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Goal",
+          "type": "object"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "agent-effects.case/v1alpha1",
+          "default": "agent-effects.case/v1alpha1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "default": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "subject": {
+          "default": "unspecified",
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "world": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "World",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    },
+    "TraceEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Data",
+          "type": "object"
+        },
+        "kind": {
+          "$ref": "#/$defs/EventKind"
+        },
+        "operation": {
+          "minLength": 1,
+          "title": "Operation",
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence",
+        "kind",
+        "operation"
+      ],
+      "title": "TraceEvent",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.agent-effects.dev/v1alpha1/reduction-report.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Defensible record of a deterministic hierarchical reduction run.",
+  "properties": {
+    "accepted_reductions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ReductionStep"
+      },
+      "title": "Accepted Reductions",
+      "type": "array"
+    },
+    "baseline_observations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ReductionObservation"
+      },
+      "title": "Baseline Observations",
+      "type": "array"
+    },
+    "cache_hits": {
+      "minimum": 0,
+      "title": "Cache Hits",
+      "type": "integer"
+    },
+    "candidate_evaluations": {
+      "minimum": 0,
+      "title": "Candidate Evaluations",
+      "type": "integer"
+    },
+    "confirm_signature_runs": {
+      "exclusiveMinimum": 0,
+      "title": "Confirm Signature Runs",
+      "type": "integer"
+    },
+    "diagnostic": {
+      "title": "Diagnostic",
+      "type": "string"
+    },
+    "different_failures": {
+      "minimum": 0,
+      "title": "Different Failures",
+      "type": "integer"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "evaluation_budget": {
+      "exclusiveMinimum": 0,
+      "title": "Evaluation Budget",
+      "type": "integer"
+    },
+    "evaluation_budget_exhausted": {
+      "default": false,
+      "title": "Evaluation Budget Exhausted",
+      "type": "boolean"
+    },
+    "final_case_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Final Case Digest",
+      "type": "string"
+    },
+    "final_size": {
+      "minimum": 0,
+      "title": "Final Size",
+      "type": "integer"
+    },
+    "guarantee": {
+      "$ref": "#/$defs/ReductionGuarantee",
+      "default": "no_minimality_claim"
+    },
+    "initial_case_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Initial Case Digest",
+      "type": "string"
+    },
+    "initial_size": {
+      "minimum": 0,
+      "title": "Initial Size",
+      "type": "integer"
+    },
+    "invalid_candidates_skipped": {
+      "minimum": 0,
+      "title": "Invalid Candidates Skipped",
+      "type": "integer"
+    },
+    "minimized": {
+      "$ref": "#/$defs/TestCase",
+      "description": "Reduced case retained under the historical field name; this field does not assert global minimality."
+    },
+    "original": {
+      "$ref": "#/$defs/TestCase"
+    },
+    "reducers_used": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Reducers Used",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "agent-effects.reduction/v1alpha1",
+      "default": "agent-effects.reduction/v1alpha1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stop_reason": {
+      "$ref": "#/$defs/ReductionStopReason"
+    },
+    "target_signature": {
+      "$ref": "#/$defs/FailureSignature"
+    },
+    "time_budget_exhausted": {
+      "default": false,
+      "title": "Time Budget Exhausted",
+      "type": "boolean"
+    },
+    "time_budget_ms": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Budget Ms"
+    },
+    "validity_predicate": {
+      "default": "unspecified",
+      "minLength": 1,
+      "title": "Validity Predicate",
+      "type": "string"
+    }
+  },
+  "required": [
+    "original",
+    "minimized",
+    "initial_case_digest",
+    "final_case_digest",
+    "initial_size",
+    "final_size",
+    "target_signature",
+    "candidate_evaluations",
+    "cache_hits",
+    "invalid_candidates_skipped",
+    "different_failures",
+    "elapsed_ms",
+    "evaluation_budget",
+    "confirm_signature_runs",
+    "stop_reason",
+    "diagnostic"
+  ],
+  "title": "ReductionReport",
+  "type": "object",
+  "x-agent-effects-schema-version": "v1alpha1"
+}
