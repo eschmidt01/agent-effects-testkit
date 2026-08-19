@@ -4,6 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import click
 import pytest
 from typer.testing import CliRunner
 
@@ -53,13 +54,13 @@ def test_init_cli_reports_conflicts_and_unknown_templates(tmp_path: Path) -> Non
     # Exercise the narrow non-interactive terminal behavior used by GitHub Actions.
     project = tmp_path / ("long-project-path-" + ("x" * 80)) / "cli"
     created = runner.invoke(app, ["init", str(project)])
-    conflict = runner.invoke(app, ["init", str(project)])
+    conflict = runner.invoke(app, ["init", str(project)], color=True)
     unknown = runner.invoke(app, ["init", str(tmp_path / "unknown"), "--template", "x"])
 
     assert created.exit_code == 0, created.stdout
     assert "next:" in created.stdout
     assert conflict.exit_code != 0
-    assert "--force" in conflict.output
+    assert "--force" in click.unstyle(conflict.output)
     assert unknown.exit_code != 0
     assert "unknown template" in unknown.output
 
