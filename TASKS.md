@@ -116,7 +116,7 @@ without claiming remote-CI or release success.
 - [x] A proposed LangGraph ADR exists without integration code or core dependency.
 - [x] The audited source is captured in one initial local import commit.
 - [x] The exact candidate commit passes an observable GitHub Actions run.
-- [ ] The passing commit is tagged `v0.1.0a1` and published as an authorized
+- [x] The passing commit is tagged `v0.1.0a1` and published as an authorized
   GitHub prerelease.
 
 ## P1 — real framework adoption

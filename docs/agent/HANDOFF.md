@@ -1,7 +1,7 @@
 # Implementation handoff
 
 Task: AE-003, AE-004, and minimum viable Phase 6
-Status: local and remote CI complete; prerelease and external quickstart timing open
+Status: v0.1.0a1 public alpha released; external quickstart timing open
 
 Changed:
 
@@ -42,8 +42,11 @@ Decisions:
 
 Risks / unresolved:
 
-- GitHub Actions run `32313536424` passed the complete Python 3.11–3.13,
-  quality, package, and clean-room matrix for commit `97e853b061a10686a835ead1a82d6a28ef528719`;
+- GitHub Actions run `32313705475` passed the complete Python 3.11–3.13,
+  quality, package, and clean-room matrix for tagged commit
+  `2c96341cd24ca24eedfa17dd7b4e662e5229d0a4`;
+- the GitHub prerelease and public-wheel clean-room workflow passed, but no
+  artifact was published to PyPI or TestPyPI;
 - no external engineer has timed the quickstart;
 - installed registered reproducers execute code and are not sandboxed;
 - adapters still own redaction, agent execution limits, and test-environment isolation;
@@ -52,5 +55,5 @@ Risks / unresolved:
 
 Next:
 
-- publish the authorized GitHub prerelease from an exact green commit, then run
-  one external onboarding session before starting LangGraph.
+- run one independent external onboarding session, collect an alpha adoption
+  report, and create issues from the findings before starting LangGraph.

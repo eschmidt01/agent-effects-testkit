@@ -87,20 +87,29 @@ machine-specific output is intentionally not stored in source control.
 The hierarchical sample is an intentional test/documentation fixture under
 [`tests/fixtures/failure_bundles/refund-lost-ack`](tests/fixtures/failure_bundles/refund-lost-ack).
 
-## Remaining release gates
+## Remote release validation
 
 - GitHub Actions run
   [`32313536424`](https://github.com/eschmidt01/agent-effects-testkit/actions/runs/32313536424)
   passed for commit `97e853b061a10686a835ead1a82d6a28ef528719`, including
   Python 3.11, 3.12, and 3.13, quality, packaging, schema, bundle, and
   installed-wheel clean-room jobs.
-- The annotated tag, GitHub prerelease, and public-release installation check
-  remain open until the final post-CI revision is validated.
+- Annotated tag `v0.1.0a1` resolves to green commit
+  `2c96341cd24ca24eedfa17dd7b4e662e5229d0a4`. The
+  [GitHub prerelease](https://github.com/eschmidt01/agent-effects-testkit/releases/tag/v0.1.0a1)
+  contains the tagged-source wheel, sdist, and `SHA256SUMS`.
+- A fresh Python 3.13 environment downloaded the public GitHub attachments,
+  verified both hashes, installed only the downloaded wheel, reproduced the
+  stable `duplicate_business_effect, refund_cardinality` signature, and passed
+  after the documented stable-idempotency switch.
+
+## Remaining adoption gates
+
 - An external engineer has not independently completed or timed the quickstart.
 - No design-partner or retained real-world regression evidence exists yet.
 - Reproducer code is installed code and still requires an appropriate external
   sandbox for untrusted adapters.
 
-The accurate pre-tag status is: an experimental public-alpha candidate for
-deterministic pre-production testing of AI-agent side effects. It is not a
-generally production-ready release.
+The accurate status is: an experimental public alpha for deterministic
+pre-production testing of AI-agent side effects. It is not a generally
+production-ready release.
