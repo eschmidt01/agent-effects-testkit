@@ -54,6 +54,11 @@ changes with explicit migration notes.
 - `ReductionGuarantee` is public, and `HierarchicalShrinker.shrink` accepts an
   optional stable `validity_predicate_id` for portable reports
 
+### Fixed
+
+- Keep `agent-effects init` conflict recovery guidance visible when long paths
+  are rendered in narrow non-interactive terminals such as GitHub Actions
+
 ### Compatibility
 
 - Existing `agent-effects.case/v1alpha1` cases and legacy `0.1.0a0` bundle

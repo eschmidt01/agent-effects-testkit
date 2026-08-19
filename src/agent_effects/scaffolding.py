@@ -249,7 +249,8 @@ def generate_project(
     if conflicts and not force:
         displayed = ", ".join(path.relative_to(destination).as_posix() for path in conflicts)
         raise ScaffoldError(
-            f"refusing to overwrite existing files: {displayed}; rerun with --force"
+            "rerun with --force to replace files owned by the selected template; "
+            f"refusing to overwrite existing files: {displayed}"
         )
     destination.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []

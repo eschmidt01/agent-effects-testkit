@@ -50,7 +50,8 @@ def test_template_path_traversal_is_rejected(tmp_path: Path) -> None:
 
 
 def test_init_cli_reports_conflicts_and_unknown_templates(tmp_path: Path) -> None:
-    project = tmp_path / "cli"
+    # Exercise the narrow non-interactive terminal behavior used by GitHub Actions.
+    project = tmp_path / ("long-project-path-" + ("x" * 80)) / "cli"
     created = runner.invoke(app, ["init", str(project)])
     conflict = runner.invoke(app, ["init", str(project)])
     unknown = runner.invoke(app, ["init", str(tmp_path / "unknown"), "--template", "x"])
