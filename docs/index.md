@@ -5,6 +5,9 @@ failures in tool-using AI agents. It generates or accepts valid world states,
 injects failures at business commit boundaries, evaluates deterministic outcome
 contracts, and reduces failing cases while preserving a stable failure signature.
 
+Source, issues, and release artifacts are hosted at
+[github.com/eschmidt01/agent-effects-testkit](https://github.com/eschmidt01/agent-effects-testkit).
+
 Start here:
 
 - [Research validation](RESEARCH_VALIDATION.md)

@@ -67,6 +67,9 @@ changes with explicit migration notes.
   local `v1alpha1` reports without assigning a minimality guarantee. New report
   guarantee/validity fields have compatibility defaults.
 
+[Unreleased]: https://github.com/eschmidt01/agent-effects-testkit/compare/v0.1.0a1...HEAD
+[0.1.0a1]: https://github.com/eschmidt01/agent-effects-testkit/releases/tag/v0.1.0a1
+
 ## [0.1.0a0] - 2026-08-19
 
 ### Added

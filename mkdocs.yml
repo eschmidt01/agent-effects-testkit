@@ -1,5 +1,8 @@
 site_name: Agent Effects Testkit
 site_description: Commit-aware semantic fault testing for side-effecting AI agents
+repo_name: eschmidt01/agent-effects-testkit
+repo_url: https://github.com/eschmidt01/agent-effects-testkit
+edit_uri: edit/main/docs/
 
 theme:
   name: material

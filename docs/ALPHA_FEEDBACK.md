@@ -3,9 +3,10 @@
 Agent Effects Testkit has no telemetry. Early-use feedback is explicit,
 voluntary, and submitted only when a tester chooses to share it.
 
-After the repository is public, select the **Alpha adoption report** issue form.
-Do not attach production data, credentials, customer identifiers, or an
-unredacted failure bundle.
+Select the
+[Alpha adoption report](https://github.com/eschmidt01/agent-effects-testkit/issues/new?template=alpha_adoption_report.yml)
+issue form. Do not attach production data, credentials, customer identifiers,
+or an unredacted failure bundle.
 
 The report asks for:
 

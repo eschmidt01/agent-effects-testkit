@@ -1,7 +1,34 @@
 # Agent Effects Testkit
 
-> **Provisional project name.** A pytest-native toolkit for reducing reproducible
-> side-effect failures in tool-using AI agents.
+[![CI](https://github.com/eschmidt01/agent-effects-testkit/actions/workflows/ci.yml/badge.svg)](https://github.com/eschmidt01/agent-effects-testkit/actions/workflows/ci.yml)
+[![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-3776AB.svg)](https://www.python.org/downloads/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Version: 0.1.0a1](https://img.shields.io/badge/version-0.1.0a1-orange.svg)](CHANGELOG.md)
+
+A pytest-native transaction-testing toolkit for engineers building AI agents
+that create durable side effects. Use it when retries, resumptions, cancellation,
+or lost acknowledgements can leave the business world in an invalid state.
+
+> A refund commits.<br>
+> Its acknowledgement is lost.<br>
+> The agent retries.<br>
+> Two refunds exist.<br>
+> Agent Effects detects the invalid business state and reduces the failure into
+> a reproducible regression case.
+
+Try the explicit lost-acknowledgement demonstration without an API key or model
+call:
+
+```bash
+python -m pip install \
+  https://github.com/eschmidt01/agent-effects-testkit/releases/download/v0.1.0a1/agent_effects_testkit-0.1.0a1-py3-none-any.whl
+agent-effects init ./lost-ack-demo --template lost-ack
+cd lost-ack-demo
+pytest -q  # intentionally fails with a duplicate-effect contract violation
+```
+
+The alpha does not provide an agent framework, hosted service, model judge,
+runtime idempotency layer, or sandbox for installed reproducer code.
 
 AI agents do not only produce text. They create refunds, send messages, update
 cases, mutate infrastructure, and resume long-running work. A response can look
@@ -236,5 +263,10 @@ entry using [`docs/agent/SESSION_CHECKLIST.md`](docs/agent/SESSION_CHECKLIST.md)
 Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request. Please
 report security issues according to [`SECURITY.md`](SECURITY.md), especially if
 a failure bundle can leak sensitive test or production data.
+
+Use the [issue tracker](https://github.com/eschmidt01/agent-effects-testkit/issues)
+for bugs and feature requests, or submit the voluntary
+[alpha adoption report](https://github.com/eschmidt01/agent-effects-testkit/issues/new?template=alpha_adoption_report.yml)
+after a clean-room trial.
 
 Apache-2.0 licensed. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).

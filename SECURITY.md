@@ -8,10 +8,10 @@ The project is pre-release. Security fixes are applied to the latest alpha only.
 
 Do not open a public issue for a vulnerability that could expose secrets,
 private world snapshots, personal data, arbitrary code execution, or unsafe
-artifact handling. Contact the repository maintainers privately through the
-security-advisory mechanism after the repository is published.
+artifact handling. Contact the repository maintainers privately through
+[GitHub's security-advisory mechanism](https://github.com/eschmidt01/agent-effects-testkit/security/advisories/new).
 
-Until a public repository exists, keep the report private and include:
+Include:
 
 - affected version/commit;
 - concise reproduction using synthetic data;

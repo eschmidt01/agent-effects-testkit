@@ -5,7 +5,8 @@ Thank you for helping make side-effecting agents safer to test.
 ## Before opening code
 
 - Read `AGENTS.md`, `docs/PRODUCT_SPEC.md`, and the relevant ADR.
-- Search existing issues and `TASKS.md`.
+- Search [existing issues](https://github.com/eschmidt01/agent-effects-testkit/issues)
+  and `TASKS.md`.
 - For substantial behavior or schema changes, open a design issue first.
 - Keep contributions within the narrow testing boundary.
 
@@ -28,7 +29,8 @@ python -m compileall -q src tests examples scripts
 
 ## Pull requests
 
-A pull request should:
+[Open a pull request](https://github.com/eschmidt01/agent-effects-testkit/compare)
+only after the local checks pass. A pull request should:
 
 - solve one coherent problem;
 - include deterministic regression tests;

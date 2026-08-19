@@ -1,23 +1,22 @@
-# Remote setup and prerelease procedure
+# Public repository and prerelease runbook
 
-These commands are prepared for use only after the repository owner explicitly
-authorizes external publication. They have not been executed. Replace every
-angle-bracketed placeholder; do not infer an owner or organization.
+This runbook records the authorized GitHub publication path for
+`eschmidt01/agent-effects-testkit`. It never publishes to PyPI or TestPyPI.
 
 ## 1. Create an empty public repository
 
-Create `<GITHUB_OWNER>/<REPOSITORY_NAME>` in the GitHub UI with no generated
+Create `eschmidt01/agent-effects-testkit` in the GitHub UI with no generated
 README, license, or `.gitignore`, or run:
 
 ```bash
-gh repo create <GITHUB_OWNER>/<REPOSITORY_NAME> --public \
-  --description "Commit-aware side-effect testing for AI agents"
+gh repo create eschmidt01/agent-effects-testkit --public \
+  --description "Property-based transaction testing for AI agents with real-world side effects. Inject commit-boundary failures, assert business invariants, and reduce failures into reproducible regression cases."
 ```
 
 ## 2. Add and verify `origin`
 
 ```bash
-git remote add origin https://github.com/<GITHUB_OWNER>/<REPOSITORY_NAME>.git
+git remote add origin https://github.com/eschmidt01/agent-effects-testkit.git
 git remote -v
 ```
 
@@ -30,15 +29,15 @@ git push -u origin main
 ## 4. Observe the exact GitHub Actions run
 
 ```bash
-gh run list --repo <GITHUB_OWNER>/<REPOSITORY_NAME> --branch main --limit 5
-gh run watch <RUN_ID> --repo <GITHUB_OWNER>/<REPOSITORY_NAME> --exit-status
+gh run list --repo eschmidt01/agent-effects-testkit --branch main --limit 5
+gh run watch <RUN_ID> --repo eschmidt01/agent-effects-testkit --exit-status
 ```
 
 Record both values after the run passes:
 
 ```text
 Commit SHA: <FULL_COMMIT_SHA>
-Workflow URL: https://github.com/<GITHUB_OWNER>/<REPOSITORY_NAME>/actions/runs/<RUN_ID>
+Workflow URL: https://github.com/eschmidt01/agent-effects-testkit/actions/runs/<RUN_ID>
 ```
 
 Do not treat a local matrix as remote-CI success.
@@ -60,9 +59,9 @@ Use the `0.1.0a1` section of `CHANGELOG.md` as the release notes:
 
 ```bash
 gh release create v0.1.0a1 \
-  --repo <GITHUB_OWNER>/<REPOSITORY_NAME> \
+  --repo eschmidt01/agent-effects-testkit \
   --prerelease \
-  --title "Agent Effects Testkit v0.1.0a1" \
+  --title "Agent Effects Testkit v0.1.0a1 — Experimental Public Alpha" \
   --notes-file <PREPARED_RELEASE_NOTES_FILE>
 ```
 
@@ -74,7 +73,7 @@ publication authorization:
 
 ```bash
 gh release upload v0.1.0a1 dist/*.whl dist/*.tar.gz \
-  --repo <GITHUB_OWNER>/<REPOSITORY_NAME>
+  --repo eschmidt01/agent-effects-testkit
 ```
 
 This procedure does not publish to PyPI or TestPyPI. Either publication requires
