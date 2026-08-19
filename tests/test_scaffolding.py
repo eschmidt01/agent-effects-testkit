@@ -4,8 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-import click
 import pytest
+from rich.text import Text
 from typer.testing import CliRunner
 
 from agent_effects.cli import app
@@ -60,7 +60,7 @@ def test_init_cli_reports_conflicts_and_unknown_templates(tmp_path: Path) -> Non
     assert created.exit_code == 0, created.stdout
     assert "next:" in created.stdout
     assert conflict.exit_code != 0
-    assert "--force" in click.unstyle(conflict.output)
+    assert "--force" in Text.from_ansi(conflict.output).plain
     assert unknown.exit_code != 0
     assert "unknown template" in unknown.output
 
