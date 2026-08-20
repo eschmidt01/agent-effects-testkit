@@ -1,9 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
-  <title id="title">Agent Effects social preview</title><desc id="desc">Agent Effects tests the world an AI agent leaves behind, illustrated by one expected refund and two observed refunds after a lost acknowledgement.</desc>
-  <rect width="1280" height="640" fill="#101513"/><circle cx="1080" cy="116" r="240" fill="#12372f"/><circle cx="1160" cy="520" r="310" fill="#441e1b" opacity=".72"/>
-  <g font-family="ui-sans-serif,system-ui,sans-serif"><text x="76" y="112" fill="#4bd1b3" font-size="25" font-weight="800" letter-spacing="3">AGENT EFFECTS</text><text x="76" y="214" fill="#edf4ef" font-size="68" font-weight="850">Test the world your</text><text x="76" y="290" fill="#edf4ef" font-size="68" font-weight="850">AI agent leaves behind.</text><text x="76" y="364" fill="#a6b4ad" font-size="28">Refund committed → acknowledgement lost → retry</text>
-    <g transform="translate(76 420)"><rect width="330" height="112" rx="18" fill="#171d1a" stroke="#4bd1b3" stroke-width="2"/><text x="26" y="40" fill="#a6b4ad" font-size="20">expected</text><text x="26" y="87" fill="#4bd1b3" font-size="43" font-weight="850">1 refund</text></g>
-    <g transform="translate(430 420)"><rect width="330" height="112" rx="18" fill="#171d1a" stroke="#ff8a80" stroke-width="2"/><text x="26" y="40" fill="#a6b4ad" font-size="20">observed</text><text x="26" y="87" fill="#ff8a80" font-size="43" font-weight="850">2 refunds</text></g>
-    <text x="76" y="590" fill="#a6b4ad" font-size="21">Commit-aware faults · deterministic contracts · reduced regressions</text>
+  <title id="title">Agent Effects social preview</title>
+  <desc id="desc">Agent Effects tests the world an AI agent leaves behind. A refund commits, acknowledgement is lost, and a retry creates a second refund.</desc>
+  <rect width="1280" height="640" fill="#0d1117"/>
+  <path d="M0 64H1280" stroke="#30363d"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <text x="64" y="41" fill="#e6edf3" font-size="18" font-weight="650">Agent Effects Testkit</text>
+    <text x="1216" y="41" fill="#8b949e" font-size="15" text-anchor="end">deterministic side-effect testing</text>
+
+    <text x="64" y="154" fill="#58a6ff" font-size="16" font-weight="700" letter-spacing="1.4">AGENT EFFECTS</text>
+    <text x="64" y="216" fill="#e6edf3" font-size="50" font-weight="700">Test the world</text>
+    <text x="64" y="274" fill="#e6edf3" font-size="50" font-weight="700">your AI agent</text>
+    <text x="64" y="332" fill="#e6edf3" font-size="50" font-weight="700">leaves behind.</text>
+    <text x="64" y="382" fill="#8b949e" font-size="20">“Refund complete.” Final state: two refunds.</text>
+
+    <rect x="64" y="444" width="452" height="116" rx="6" fill="#161b22" stroke="#30363d"/>
+    <text x="88" y="476" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="14">FINAL-STATE CONTRACT</text>
+    <text x="88" y="525" fill="#3fb950" font-size="29" font-weight="700">expected 1</text>
+    <text x="282" y="525" fill="#ff7b72" font-size="29" font-weight="700">observed 2</text>
+
+    <rect x="580" y="114" width="636" height="446" rx="6" fill="#161b22" stroke="#30363d"/>
+    <text x="608" y="150" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="14">transaction trace</text>
+    <path d="M630 202H1140" stroke="#6e7681" stroke-width="2"/>
+    <circle cx="650" cy="202" r="18" fill="#0d1117" stroke="#6e7681" stroke-width="2"/>
+    <circle cx="810" cy="202" r="18" fill="#0f2d1d" stroke="#3fb950" stroke-width="2"/>
+    <circle cx="970" cy="202" r="18" fill="#332701" stroke="#d29922" stroke-width="2"/>
+    <circle cx="1130" cy="202" r="18" fill="#490202" stroke="#f85149" stroke-width="2"/>
+    <text x="650" y="246" fill="#e6edf3" font-size="15" text-anchor="middle">request</text>
+    <text x="810" y="246" fill="#3fb950" font-size="15" text-anchor="middle">commit</text>
+    <text x="970" y="246" fill="#d29922" font-size="15" text-anchor="middle">ack lost</text>
+    <text x="1130" y="246" fill="#ff7b72" font-size="15" text-anchor="middle">retry + commit</text>
+
+    <text x="608" y="316" fill="#8b949e" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="14">FAILURE SIGNATURE</text>
+    <text x="608" y="351" fill="#e6edf3" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="18">duplicate_business_effect</text>
+    <text x="608" y="381" fill="#e6edf3" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="18">refund_cardinality</text>
+
+    <path d="M608 414H1188" stroke="#30363d"/>
+    <text x="608" y="454" fill="#58a6ff" font-size="14" font-weight="700">REDUCED COUNTEREXAMPLE</text>
+    <text x="608" y="502" fill="#e6edf3" font-size="29" font-weight="700">1 order · 1 fault</text>
+    <text x="1188" y="529" fill="#8b949e" font-size="14" text-anchor="end">No API key · No hosted service</text>
   </g>
 </svg>

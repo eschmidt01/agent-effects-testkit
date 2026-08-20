@@ -1,7 +1,7 @@
 include README.md LICENSE NOTICE CHANGELOG.md VALIDATION_REPORT.md
 include CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md GOVERNANCE.md
 include AGENTS.md CLAUDE.md TASKS.md CITATION.cff mkdocs.yml Makefile
-recursive-include docs *.md *.csv *.html *.svg *.png *.gif *.tape
+recursive-include docs *.md *.csv *.css *.html *.svg *.png *.gif *.tape
 recursive-include examples *.py *.md
 recursive-include scripts *.sh *.py
 recursive-include schemas *.json

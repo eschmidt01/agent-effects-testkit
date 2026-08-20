@@ -56,8 +56,12 @@ def test_demo_naive_writes_bundle_and_fails(tmp_path: Path) -> None:
     assert any(output.iterdir())
 
 
-def test_demo_naive_report_explains_expected_and_observed_state(tmp_path: Path) -> None:
-    output = tmp_path / "failures"
+def test_demo_naive_report_explains_expected_and_observed_state(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    output = Path(".agent-effects/failures")
     result = runner.invoke(
         app,
         ["demo", "--agent", "naive", "--output", str(output), "--report"],
@@ -67,6 +71,8 @@ def test_demo_naive_report_explains_expected_and_observed_state(tmp_path: Path) 
     assert "expected 1 refund" in result.stdout
     assert "observed 2 refunds" in result.stdout
     assert "report:" in result.stdout
+    assert str(tmp_path) not in result.stdout
+    assert ".agent-effects/failures/" in result.stdout
     assert len(list(output.glob("*-report.html"))) == 1
 
 

@@ -6,17 +6,19 @@ Set FontSize 18
 Set Width 1200
 Set Height 720
 Set Padding 24
-Set TypingSpeed 35ms
+Set TypingSpeed 30ms
 Set Framerate 12
-Set Theme { "background": "#101513", "foreground": "#edf4ef", "black": "#101513", "brightBlack": "#61706a", "red": "#ff8a80", "brightRed": "#ff8a80", "green": "#4bd1b3", "brightGreen": "#9be6d4", "yellow": "#f2c14e", "brightYellow": "#ffe299", "blue": "#75b8ff", "brightBlue": "#a9d3ff", "magenta": "#c7a8ff", "brightMagenta": "#dbc9ff", "cyan": "#4bd1b3", "brightCyan": "#9be6d4", "white": "#edf4ef", "brightWhite": "#ffffff" }
+Set Theme { "background": "#0d1117", "foreground": "#e6edf3", "black": "#0d1117", "brightBlack": "#8b949e", "red": "#ff7b72", "brightRed": "#ffa198", "green": "#3fb950", "brightGreen": "#56d364", "yellow": "#d29922", "brightYellow": "#e3b341", "blue": "#58a6ff", "brightBlue": "#79c0ff", "magenta": "#bc8cff", "brightMagenta": "#d2a8ff", "cyan": "#39c5cf", "brightCyan": "#56d4dd", "white": "#b1bac4", "brightWhite": "#f0f6fc" }
 
 Type "agent-effects demo --agent naive --report"
-Sleep 500ms
+Sleep 350ms
 Enter
-Sleep 11s
-Type "agent-effects bundle report .agent-effects/failures/refund-lost-ack-*/ --output .agent-effects/failure-report.html"
-Sleep 500ms
+Sleep 7s
+Type "agent-effects bundle verify .agent-effects/failures/refund-lost-ack-*/"
+Sleep 350ms
 Enter
-Sleep 3s
-Type "# expected 1 refund · observed 2 refunds · open .agent-effects/failure-report.html"
-Sleep 3s
+Sleep 2s
+Type "ls .agent-effects/failures/*-report.html"
+Sleep 350ms
+Enter
+Sleep 6s

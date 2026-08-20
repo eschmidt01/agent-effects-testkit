@@ -38,3 +38,28 @@ def test_documentation_links_and_images_resolve_inside_repository() -> None:
                 broken.append(f"{document.relative_to(ROOT)} -> {raw_target} does not exist")
 
     assert not broken, "\n".join(broken)
+
+
+def test_visual_sources_are_environment_neutral_and_finish_cleanly() -> None:
+    assets = ROOT / "docs" / "assets"
+    sources = (
+        assets / "hero-lost-ack-light.svg",
+        assets / "hero-lost-ack-dark.svg",
+        assets / "source" / "social-preview.svg",
+        assets / "source" / "agent-effects-demo.tape",
+    )
+    rendered = "\n".join(path.read_text(encoding="utf-8") for path in sources)
+    tape = sources[-1].read_text(encoding="utf-8")
+
+    assert "/Users/" not in rendered
+    assert "agent-effects-testkit-starter" not in rendered
+    assert 'Type "#' not in tape
+    assert 'Type "ls .agent-effects/failures/*-report.html"' in tape
+
+
+def test_docs_styles_use_only_local_system_fonts() -> None:
+    stylesheet = (ROOT / "docs" / "stylesheets" / "extra.css").read_text(encoding="utf-8")
+
+    assert "@import" not in stylesheet
+    assert "url(" not in stylesheet
+    assert "-apple-system" in stylesheet

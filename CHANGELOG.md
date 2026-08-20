@@ -23,8 +23,22 @@ changes with explicit migration notes.
 
 - Public message now leads with “Agent Effects — Test the world your AI agent
   leaves behind,” while retaining Agent Effects Testkit as the formal package
+- Documentation, transaction diagrams, social preview, and failure report now
+  use a restrained GitHub-style visual system with system fonts, neutral
+  surfaces, crisp borders, and accessible light/dark palettes
+- The terminal demonstration now ends on a verified bundle and report path,
+  and working-directory artifacts display without machine-specific prefixes
+- MkDocs navigation is grouped into Get started, Guides, Reference, and Project
+  sections instead of promoting every document to a top-level tab
 - Roadmap completes the visual report before the proposed single LangGraph
   integration
+
+### Fixed
+
+- Removed an unfinished shell comment and an absolute local path from the
+  reproducible terminal demonstration
+- Enabled the documentation workflow to deploy the visual-report branch before
+  merge so the public Pages URL can be reviewed instead of returning 404
 
 ### Security
 
