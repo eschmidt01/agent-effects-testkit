@@ -39,7 +39,7 @@ jobs:
           uv build --wheel --out-dir /tmp/aet-wheel
           uv venv --python "${{ matrix.python-version }}" /tmp/aet-wheel-install
           uv pip install --python /tmp/aet-wheel-install/bin/python /tmp/aet-wheel/*.whl
-          /tmp/aet-wheel-install/bin/python -c "import agent_effects, importlib.metadata; assert importlib.metadata.version('agent-effects-testkit') == agent_effects.__version__ == '0.1.0a1'"
+          /tmp/aet-wheel-install/bin/python -c "import agent_effects, importlib.metadata; assert importlib.metadata.version('agent-effects-testkit') == agent_effects.__version__ == '0.1.0a2'"
           /tmp/aet-wheel-install/bin/agent-effects doctor
       - name: Exercise expected failing demo
         shell: bash
@@ -68,6 +68,10 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy --strict src tests
       - run: uv run mkdocs build --strict
+      - name: Prove static report determinism
+        run: |
+          uv run python scripts/generate_failure_report.py
+          git diff --exit-code -- docs/reports/refund-lost-ack.html
       - name: Prove schema export determinism
         run: uv run pytest -q tests/test_schemas.py::test_schema_export_is_deterministic_and_matches_checked_in_fixtures
       - name: Verify the checked-in bundle fixture
@@ -93,6 +97,12 @@ jobs:
           uv pip install --python /tmp/aet-install/bin/python dist/*.whl
           /tmp/aet-install/bin/agent-effects doctor
           /tmp/aet-install/bin/agent-effects demo --agent idempotent
+          set +e
+          /tmp/aet-install/bin/agent-effects demo --agent naive --report --output /tmp/aet-report-demo
+          status=$?
+          set -e
+          test "$status" -eq 1
+          test "$(find /tmp/aet-report-demo -name '*-report.html' -type f | wc -l)" -eq 1
       - name: Run installed-wheel clean-room workflow
         run: uv run --locked --extra dev python scripts/clean_room_acceptance.py dist/*.whl
       - uses: actions/upload-artifact@v7

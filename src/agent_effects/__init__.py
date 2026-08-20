@@ -9,7 +9,7 @@ from __future__ import annotations
 from importlib import import_module
 from typing import TYPE_CHECKING
 
-__version__ = "0.1.0a1"
+__version__ = "0.1.0a2"
 
 if TYPE_CHECKING:
     from .adapters import CallableAgentAdapter
@@ -56,6 +56,7 @@ if TYPE_CHECKING:
         TraceEvent,
         TrialResult,
     )
+    from .report import render_bundle_report, write_bundle_report
     from .runner import TrialRunner
     from .schemas import export_schemas
     from .shrink import (
@@ -126,7 +127,9 @@ _EXPORTS: dict[str, tuple[str, str]] = {
     "evaluate_contracts": (".contracts", "evaluate_contracts"),
     "export_schemas": (".schemas", "export_schemas"),
     "load_result": (".artifacts", "load_result"),
+    "render_bundle_report": (".report", "render_bundle_report"),
     "verify_bundle": (".artifacts", "verify_bundle"),
+    "write_bundle_report": (".report", "write_bundle_report"),
     "case_digest": (".signatures", "case_digest"),
     "extract_failure_signature": (".signatures", "extract_failure_signature"),
     "at_most_one_effect": (".contract_helpers", "at_most_one_effect"),
@@ -204,9 +207,11 @@ __all__ = [
     "load_result",
     "no_effects_after_cancellation",
     "records_must_link",
+    "render_bundle_report",
     "requires_authorization_for_writes",
     "unique_business_key",
     "verify_bundle",
+    "write_bundle_report",
 ]
 
 

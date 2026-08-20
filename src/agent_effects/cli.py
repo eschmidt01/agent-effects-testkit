@@ -36,7 +36,7 @@ from .signatures import extract_failure_signature
 
 app = typer.Typer(
     no_args_is_help=True,
-    help="Property-based transaction testing for tool-using AI agents.",
+    help="Test the world your AI agent leaves behind.",
 )
 console = Console()
 bundle_app = typer.Typer(help="Verify and inspect portable failure bundles.")
@@ -159,6 +159,36 @@ def bundle_inspect(
     console.print(table)
 
 
+@bundle_app.command("report")
+def bundle_report_command(
+    path: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", help="Output HTML path; defaults beside the bundle"),
+    ] = None,
+    open_report: Annotated[
+        bool,
+        typer.Option("--open", help="Open the generated local file in the default browser"),
+    ] = False,
+) -> None:
+    """Render a verified bundle without resolving or executing its reproducer."""
+
+    from .report import write_bundle_report
+
+    try:
+        bundle = FailureBundle.load(path)
+        destination = output or path.parent / f"{path.name}-report.html"
+        report_path = write_bundle_report(bundle, destination)
+    except (ValueError, OSError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    console.print(f"[green]report[/]: {report_path} (verified bundle; no reproducer code executed)")
+    if open_report:
+        import webbrowser
+
+        webbrowser.open(report_path.as_uri())
+        console.print(f"[green]opened[/]: {report_path.as_uri()}")
+
+
 @schema_app.command("export")
 def schema_export(
     output: Annotated[Path, typer.Option("--output", help="Schema output directory")],
@@ -230,6 +260,10 @@ def demo(
         typer.Option(help="Directory for portable failure bundles"),
     ] = Path(".agent-effects/failures"),
     shrink: Annotated[bool, typer.Option("--shrink/--no-shrink")] = True,
+    report: Annotated[
+        bool,
+        typer.Option("--report/--no-report", help="Write a static HTML report for failures"),
+    ] = False,
 ) -> None:
     if agent not in AGENTS:
         raise typer.BadParameter(f"unknown agent {agent!r}; choose from {sorted(AGENTS)}")
@@ -278,8 +312,16 @@ def demo(
             )
 
         artifact_path = None
+        report_path = None
         if not result.passed:
             artifact_path = FailureStore(output).write(result, shrink=shrink_report)
+            if report:
+                from .report import write_bundle_report
+
+                report_path = write_bundle_report(
+                    FailureBundle.load(artifact_path),
+                    artifact_path.parent / f"{artifact_path.name}-report.html",
+                )
 
         refunds = result.final_state.get("refunds", []) if result.final_state else []
         refund_count = len(refunds) if isinstance(refunds, list) else 0
@@ -311,6 +353,10 @@ def demo(
         if artifact_path is not None:
             table.add_row("Failure bundle", str(artifact_path))
         console.print(table)
+        if report_path is not None:
+            console.print("expected 1 refund", soft_wrap=True)
+            console.print(f"observed {refund_count} refunds", soft_wrap=True)
+            console.print(f"report: {report_path}", soft_wrap=True)
         return 0 if result.passed else 1
 
     try:

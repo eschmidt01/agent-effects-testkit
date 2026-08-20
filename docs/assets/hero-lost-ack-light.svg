@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="470" viewBox="0 0 1400 470" role="img" aria-labelledby="title desc">
+  <title id="title">Lost acknowledgement refund transaction</title>
+  <desc id="desc">A refund request durably commits, its acknowledgement is lost, the agent retries and creates a second refund. Agent Effects observes two instead of one and reduces the counterexample to one order and one fault.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#69756f"/></marker>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#18201d" flood-opacity=".10"/></filter>
+  </defs>
+  <rect width="1400" height="470" rx="24" fill="#f7f5f0"/>
+  <text x="54" y="62" fill="#18201d" font-family="ui-sans-serif,system-ui,sans-serif" font-size="28" font-weight="750">The response looked right. The world was wrong.</text>
+  <text x="54" y="98" fill="#61706a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="19">timeout_after_commit turns an ambiguous retry into a deterministic transaction test</text>
+  <g font-family="ui-sans-serif,system-ui,sans-serif" font-size="17" text-anchor="middle">
+    <g filter="url(#shadow)"><rect x="52" y="160" width="154" height="92" rx="14" fill="#ffffff" stroke="#cfd7d2"/><text x="129" y="198" fill="#18201d" font-weight="700">refund</text><text x="129" y="222" fill="#61706a">request</text></g>
+    <path d="M210 206H245" stroke="#69756f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)"><rect x="252" y="160" width="154" height="92" rx="14" fill="#e8f7f2" stroke="#007a65"/><circle cx="329" cy="187" r="8" fill="#007a65"/><text x="329" y="214" fill="#075e50" font-weight="700">durable commit</text><text x="329" y="237" fill="#397166" font-size="14">refund #1</text></g>
+    <path d="M410 206H445" stroke="#69756f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)"><rect x="452" y="160" width="154" height="92" rx="14" fill="#fff4d6" stroke="#bd7a00"/><path d="M512 177l34 34M546 177l-34 34" stroke="#bd7a00" stroke-width="4"/><text x="529" y="229" fill="#805300" font-size="13" font-weight="700">acknowledgement</text><text x="529" y="245" fill="#805300" font-size="13" font-weight="700">lost</text></g>
+    <path d="M610 206H645" stroke="#69756f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)"><rect x="652" y="160" width="154" height="92" rx="14" fill="#ffffff" stroke="#cfd7d2"/><path d="M709 194a22 22 0 1 1 7 24" fill="none" stroke="#52615a" stroke-width="4"/><path d="M706 183l4 14 13-6" fill="none" stroke="#52615a" stroke-width="4"/><text x="729" y="238" fill="#18201d" font-weight="700">retry</text></g>
+    <path d="M810 206H845" stroke="#69756f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)"><rect x="852" y="160" width="154" height="92" rx="14" fill="#fdeceb" stroke="#b42318"/><circle cx="929" cy="187" r="8" fill="#b42318"/><text x="929" y="214" fill="#8b1c14" font-weight="700">second refund</text><text x="929" y="237" fill="#9d4b44" font-size="14">refund #2</text></g>
+    <path d="M1010 206H1045" stroke="#69756f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)"><rect x="1052" y="142" width="294" height="128" rx="16" fill="#18201d"/><text x="1199" y="181" fill="#9be6d4" font-size="15" font-weight="700">FINAL-STATE CONTRACT</text><text x="1199" y="217" fill="#ffffff" font-size="24" font-weight="800">expected 1 · observed 2</text><text x="1199" y="245" fill="#b9c5bf" font-size="14">refund_cardinality</text></g>
+  </g>
+  <path d="M1199 282V322" stroke="#69756f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <g filter="url(#shadow)" font-family="ui-sans-serif,system-ui,sans-serif"><rect x="864" y="330" width="482" height="86" rx="14" fill="#ffffff" stroke="#007a65"/><text x="1105" y="365" text-anchor="middle" fill="#007a65" font-size="15" font-weight="750">REDUCED COUNTEREXAMPLE</text><text x="1105" y="394" text-anchor="middle" fill="#18201d" font-size="23" font-weight="800">1 order + 1 timeout_after_commit fault</text></g>
+  <text x="54" y="386" fill="#18201d" font-family="ui-sans-serif,system-ui,sans-serif" font-size="24" font-weight="750">Agent Effects tests the world left behind.</text>
+  <text x="54" y="418" fill="#61706a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="17">No API key · No model call · No hosted service</text>
+</svg>

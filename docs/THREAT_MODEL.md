@@ -70,8 +70,15 @@ schemas, compare complete SHA-256 hashes, and cross-check redundant identities.
 Unsigned hashes provide integrity relative to the manifest and do not authenticate
 the author or provenance; an attacker able to change payloads and regenerate the
 manifest can create a new internally consistent bundle. Short display-ID collisions
-are resolved by comparing full digests and selecting a non-overwriting path. Escape
-content in any future HTML viewer; never execute bundle content.
+are resolved by comparing full digests and selecting a non-overwriting path.
+
+The static HTML report loads only an already verified `FailureBundle`, escapes
+every bundle-controlled string, embeds no remote assets or scripts, caps the
+structured diff, and emits a restrictive Content Security Policy. Report
+generation and `--open` do not resolve or execute a reproducer. The report can
+still expose sensitive bundle content and can be large within the existing
+per-payload limits; adapters own redaction and CI owners control artifact access
+and retention.
 
 ### Reproducer execution
 

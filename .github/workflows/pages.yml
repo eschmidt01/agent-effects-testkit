@@ -1,0 +1,58 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/pages.yml"
+      - "docs/**"
+      - "mkdocs.yml"
+      - "src/agent_effects/report.py"
+      - "tests/fixtures/failure_bundles/refund-lost-ack/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - run: uv sync --locked --extra docs
+      - name: Verify the public synthetic report is reproducible
+        run: |
+          uv run python scripts/generate_failure_report.py
+          git diff --exit-code -- docs/reports/refund-lost-ack.html
+      - run: uv run mkdocs build --strict --site-dir site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy documentation to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

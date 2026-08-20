@@ -4,7 +4,7 @@ set -euo pipefail
 failure_dir="${1:-.agent-effects/failures}"
 
 set +e
-agent-effects demo --agent naive --output "$failure_dir"
+agent-effects demo --agent naive --report --output "$failure_dir"
 naive_status=$?
 set -e
 

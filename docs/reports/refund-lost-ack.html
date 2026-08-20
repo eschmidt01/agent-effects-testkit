@@ -1,0 +1,1296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>Agent Effects failure — refund-lost-ack</title>
+  <style>
+    :root { color-scheme: light dark; --bg:#f7f5f0; --panel:#fff; --text:#18201d; --muted:#61706a; --line:#d9ded9; --accent:#007a65; --bad:#b42318; --warn:#9a6700; --commit:#0a66c2; --code:#eef1ee; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#101513; --panel:#171d1a; --text:#edf4ef; --muted:#a6b4ad; --line:#33413a; --accent:#4bd1b3; --bad:#ff8a80; --warn:#f2c14e; --commit:#75b8ff; --code:#222b27; } }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font:15px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1120px; margin:auto; padding:48px 24px 80px; } header { border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .eyebrow { color:var(--accent); font-weight:800; letter-spacing:.08em; text-transform:uppercase; } h1 { font-size:clamp(2rem,5vw,4.25rem); line-height:1.03; margin:.2em 0; letter-spacing:-.045em; } h2 { margin-top:42px; font-size:1.55rem; } h3 { margin-top:26px; }
+    .lede { font-size:1.2rem; max-width:760px; } .warning { margin-top:22px; padding:14px 18px; border-left:4px solid var(--warn); background:var(--panel); }
+    .outcome { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:28px 0; } .outcome div,.stat-grid div { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; } .outcome strong { display:block; font-size:1.35rem; } .expected strong { color:var(--accent); } .observed strong { color:var(--bad); }
+    table { width:100%; border-collapse:collapse; background:var(--panel); } th,td { text-align:left; vertical-align:top; border:1px solid var(--line); padding:10px 12px; } th { font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+    code,pre { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; } code { overflow-wrap:anywhere; } pre { white-space:pre-wrap; overflow-wrap:anywhere; padding:14px; background:var(--code); border-radius:8px; }
+    .timeline { list-style:none; padding:0; position:relative; } .event { display:flex; gap:14px; padding:9px 0; } .sequence { display:grid; place-items:center; flex:0 0 34px; height:34px; border:2px solid var(--line); border-radius:50%; font-weight:800; background:var(--panel); } .event-main { min-width:0; } .event-main strong { display:inline-block; min-width:108px; text-transform:uppercase; font-size:.72rem; letter-spacing:.05em; } .event-main small { display:block; color:var(--muted); } .event-commit .sequence { border-color:var(--commit); color:var(--commit); } .event-fault .sequence { border-color:var(--bad); color:var(--bad); }
+    .violation { border:1px solid var(--line); border-left:4px solid var(--bad); background:var(--panel); padding:16px 18px; margin:12px 0; } .violation div { display:flex; gap:12px; align-items:center; } .violation span,.muted { color:var(--muted); }
+    .change-added { color:var(--bad); font-weight:700; } .change-removed { color:var(--warn); font-weight:700; } .change-changed { color:var(--commit); font-weight:700; }
+    .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; } .stat-grid strong,.stat-grid span { display:block; } .stat-grid strong { font-size:1.3rem; } .stat-grid span { color:var(--muted); } .details-grid { display:grid; grid-template-columns:180px 1fr; gap:8px 16px; } .details-grid dt { color:var(--muted); } .details-grid dd { margin:0; min-width:0; }
+    details { border:1px solid var(--line); background:var(--panel); margin:8px 0; } summary { cursor:pointer; padding:12px 14px; font-weight:700; } details pre { margin:0; border-radius:0; } footer { margin-top:48px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); }
+    @media (max-width:700px) { .outcome,.stat-grid { grid-template-columns:1fr; } .details-grid { grid-template-columns:1fr; } table { display:block; overflow-x:auto; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Agent Effects · integrity-checked failure report</div>
+    <h1>Expected 1 refund; observed 2 refunds.</h1>
+    <p class="lede">The agent reported <q>Refund re_002 completed.</q>, but deterministic contracts rejected the world it left behind.</p>
+    <div class="outcome"><div class="expected"><span>Contract expectation</span><strong>Expected 1 refund</strong></div><div class="observed"><span>Final world</span><strong>Observed 2 refunds</strong></div></div>
+    <p class="warning"><strong>Sensitive-data boundary:</strong> failure bundles and reports may contain state, tool arguments, and identifiers. Redaction is adapter-owned. Review this file before uploading it as a CI artifact or sharing it.</p>
+  </header>
+
+  <section id="identity"><h2>Failure identity</h2><dl class="details-grid">
+    <dt>Case</dt><dd><code>refund-lost-ack</code></dd>
+    <dt>Failure ID</dt><dd><code>56a97f64e183</code></dd>
+    <dt>Category</dt><dd><code>contract</code></dd>
+    <dt>Agent adapter</dt><dd><code>naive</code></dd>
+    <dt>Signature</dt><dd><pre>{
+  &quot;contract_failures&quot;: [
+    {
+      &quot;contract_id&quot;: &quot;business uniqueness&quot;,
+      &quot;count&quot;: 1,
+      &quot;violation_code&quot;: &quot;duplicate_business_effect&quot;
+    },
+    {
+      &quot;contract_id&quot;: &quot;refund outcome&quot;,
+      &quot;count&quot;: 1,
+      &quot;violation_code&quot;: &quot;refund_cardinality&quot;
+    }
+  ],
+  &quot;exception_type&quot;: null,
+  &quot;primary_category&quot;: &quot;contract&quot;,
+  &quot;primary_stage&quot;: null,
+  &quot;schema_version&quot;: &quot;agent-effects.signature/v1alpha1&quot;,
+  &quot;stable_error_code&quot;: null
+}</pre></dd>
+  </dl></section>
+
+  <section id="faults"><h2>Injected fault</h2><table><thead><tr><th>Operation</th><th>Mode</th><th>Occurrence</th><th>Metadata</th></tr></thead><tbody><tr><td><code>issue_refund</code></td><td>timeout_after_commit</td><td>1</td><td><code>{}</code></td></tr></tbody></table></section>
+  <section id="timeline"><h2>Event timeline</h2><p>Blue markers identify durable commits. Red markers identify injected faults.</p><ol class="timeline"><li class="event event-read"><span class="sequence">0</span><span class="event-main"><strong>read</strong> <code>get_payment</code><small>{&quot;payment_id&quot;:&quot;pay-001&quot;}</small></span></li><li class="event event-read"><span class="sequence">1</span><span class="event-main"><strong>read</strong> <code>check_approval</code><small>{&quot;approved&quot;:true,&quot;payment_id&quot;:&quot;pay-001&quot;}</small></span></li><li class="event event-policy"><span class="sequence">2</span><span class="event-main"><strong>policy</strong> <code>issue_refund</code><small>{&quot;actor_id&quot;:&quot;ops-001&quot;,&quot;allowed&quot;:true}</small></span></li><li class="event event-tool_call"><span class="sequence">3</span><span class="event-main"><strong>tool call</strong> <code>issue_refund</code><small>{&quot;amount_cents&quot;:5000,&quot;idempotency_key&quot;:&quot;attempt-1&quot;,&quot;occurrence&quot;:1,&quot;payment_id&quot;:&quot;pay-001&quot;}</small></span></li><li class="event event-commit"><span class="sequence">4</span><span class="event-main"><strong>commit</strong> <code>issue_refund</code><small>{&quot;occurrence&quot;:1,&quot;refund_id&quot;:&quot;re_001&quot;}</small></span></li><li class="event event-fault"><span class="sequence">5</span><span class="event-main"><strong>fault</strong> <code>issue_refund</code><small>{&quot;committed&quot;:true,&quot;mode&quot;:&quot;timeout_after_commit&quot;,&quot;occurrence&quot;:1}</small></span></li><li class="event event-policy"><span class="sequence">6</span><span class="event-main"><strong>policy</strong> <code>issue_refund</code><small>{&quot;actor_id&quot;:&quot;ops-001&quot;,&quot;allowed&quot;:true}</small></span></li><li class="event event-tool_call"><span class="sequence">7</span><span class="event-main"><strong>tool call</strong> <code>issue_refund</code><small>{&quot;amount_cents&quot;:5000,&quot;idempotency_key&quot;:&quot;attempt-2&quot;,&quot;occurrence&quot;:2,&quot;payment_id&quot;:&quot;pay-001&quot;}</small></span></li><li class="event event-commit"><span class="sequence">8</span><span class="event-main"><strong>commit</strong> <code>issue_refund</code><small>{&quot;occurrence&quot;:2,&quot;refund_id&quot;:&quot;re_002&quot;}</small></span></li></ol></section>
+  <section id="violations"><h2>Contract violations</h2><article class="violation"><div><code>refund_cardinality</code><span>refund outcome</span></div><p>The workflow must leave exactly one refund for the payment.</p><p class="muted">Path: <code>$.refunds</code></p><pre>{
+  &quot;actual&quot;: 2,
+  &quot;expected&quot;: 1
+}</pre></article><article class="violation"><div><code>duplicate_business_effect</code><span>business uniqueness</span></div><p>Multiple refund records represent the same business effect.</p><p class="muted">Path: <code>$.refunds</code></p><pre>{
+  &quot;duplicate_keys&quot;: [
+    [
+      &quot;pay-001&quot;,
+      5000
+    ]
+  ]
+}</pre></article></section>
+  <section id="state-diff"><h2>Structured state diff</h2><table><thead><tr><th>Path</th><th>Change</th><th>Initial</th><th>Final</th></tr></thead><tbody><tr><td><code>$.refunds[0]</code></td><td><span class="change-added">added</span></td><td><span class="muted">not present</span></td><td><code>{&quot;amount_cents&quot;:5000,&quot;id&quot;:&quot;re_001&quot;,&quot;idempotency_key&quot;:&quot;attempt-1&quot;,&quot;payment_id&quot;:&quot;pay-001&quot;,&quot;status&quot;:&quot;succeeded&quot;}</code></td></tr><tr><td><code>$.refunds[1]</code></td><td><span class="change-added">added</span></td><td><span class="muted">not present</span></td><td><code>{&quot;amount_cents&quot;:5000,&quot;id&quot;:&quot;re_002&quot;,&quot;idempotency_key&quot;:&quot;attempt-2&quot;,&quot;payment_id&quot;:&quot;pay-001&quot;,&quot;status&quot;:&quot;succeeded&quot;}</code></td></tr></tbody></table></section>
+  <section id="reduction"><h2>Reduction</h2>
+        <div class="stat-grid">
+          <div><strong>879</strong><span>initial size</span></div>
+          <div><strong>648</strong><span>final size</span></div>
+          <div><strong>26.3%</strong><span>reduction</span></div>
+          <div><strong>5</strong><span>evaluations</span></div>
+          <div><strong>1</strong><span>cache hits</span></div>
+          <div><strong>3.397 ms</strong><span>in-process time</span></div>
+        </div>
+        <dl class="details-grid">
+          <dt>Guarantee</dt><dd><code>locally_minimal_under_configured_reducers</code></dd>
+          <dt>Stop reason</dt><dd><code>locally_minimal</code></dd>
+          <dt>Validity predicate</dt><dd><code>agent-effects.examples.refund/is_valid_refund_case/v1</code></dd>
+          <dt>Reducers</dt><dd>world_list_ddmin, fault_schedule_ddmin</dd>
+          <dt>Evaluation budget</dt><dd>5 / 250
+            (exhausted: false)</dd>
+          <dt>Time budget</dt><dd>not configured
+            (exhausted: false)</dd>
+          <dt>Target signature</dt><dd><pre>{
+  &quot;contract_failures&quot;: [
+    {
+      &quot;contract_id&quot;: &quot;business uniqueness&quot;,
+      &quot;count&quot;: 1,
+      &quot;violation_code&quot;: &quot;duplicate_business_effect&quot;
+    },
+    {
+      &quot;contract_id&quot;: &quot;refund outcome&quot;,
+      &quot;count&quot;: 1,
+      &quot;violation_code&quot;: &quot;refund_cardinality&quot;
+    }
+  ],
+  &quot;exception_type&quot;: null,
+  &quot;primary_category&quot;: &quot;contract&quot;,
+  &quot;primary_stage&quot;: null,
+  &quot;schema_version&quot;: &quot;agent-effects.signature/v1alpha1&quot;,
+  &quot;stable_error_code&quot;: null
+}</pre></dd>
+        </dl>
+        <p>No smaller valid same-signature candidate was found by the configured reducers within the configured budgets. This is a local guarantee over generated candidates, not a claim of global minimality.</p>
+        <h3>Accepted reductions</h3><ol><li><code>world_list_ddmin</code> — removed list indices (0, 1, 2, 3) at world(&#x27;noise&#x27;,) <span class="muted">(879 → 763)</span></li><li><code>world_list_ddmin</code> — removed list indices (0, 1) at world(&#x27;noise&#x27;,) <span class="muted">(763 → 705)</span></li><li><code>world_list_ddmin</code> — removed list indices (0,) at world(&#x27;noise&#x27;,) <span class="muted">(705 → 676)</span></li><li><code>world_list_ddmin</code> — removed list indices (0,) at world(&#x27;noise&#x27;,) <span class="muted">(676 → 648)</span></li></ol>
+        </section>
+  <section id="reproduction"><h2>Reproduce</h2><p>Verification and report generation execute no reproducer code. The final command crosses that boundary and executes installed registered code; run it only in an appropriate test environment.</p><pre><code>agent-effects bundle verify /path/to/bundle
+agent-effects bundle inspect /path/to/bundle
+agent-effects reproduce --dry-run /path/to/bundle
+agent-effects reproduce /path/to/bundle</code></pre></section>
+  <section id="raw"><h2>Raw verified JSON</h2><p>These collapsible documents are embedded for offline inspection. JavaScript is not required.</p><details><summary>manifest.json</summary><pre><code>{
+  &quot;adapter&quot;: {
+    &quot;kind&quot;: &quot;python&quot;,
+    &quot;module&quot;: &quot;agent_effects.adapters.callable&quot;,
+    &quot;name&quot;: &quot;naive&quot;,
+    &quot;qualname&quot;: &quot;CallableAgentAdapter&quot;
+  },
+  &quot;case_id&quot;: &quot;refund-lost-ack&quot;,
+  &quot;content_digest&quot;: &quot;56a97f64e183057a5351062be857d8266bcfa8e3077cbbbfa5e525e1f537b994&quot;,
+  &quot;contract_ids&quot;: [
+    &quot;refund outcome&quot;,
+    &quot;business uniqueness&quot;,
+    &quot;least privilege reads&quot;
+  ],
+  &quot;created_at&quot;: &quot;2026-08-19T22:46:54.436915+00:00&quot;,
+  &quot;failure_id&quot;: &quot;56a97f64e183&quot;,
+  &quot;failure_signature&quot;: {
+    &quot;contract_failures&quot;: [
+      {
+        &quot;contract_id&quot;: &quot;business uniqueness&quot;,
+        &quot;count&quot;: 1,
+        &quot;violation_code&quot;: &quot;duplicate_business_effect&quot;
+      },
+      {
+        &quot;contract_id&quot;: &quot;refund outcome&quot;,
+        &quot;count&quot;: 1,
+        &quot;violation_code&quot;: &quot;refund_cardinality&quot;
+      }
+    ],
+    &quot;exception_type&quot;: null,
+    &quot;primary_category&quot;: &quot;contract&quot;,
+    &quot;primary_stage&quot;: null,
+    &quot;schema_version&quot;: &quot;agent-effects.signature/v1alpha1&quot;,
+    &quot;stable_error_code&quot;: null
+  },
+  &quot;files&quot;: [
+    {
+      &quot;path&quot;: &quot;README.md&quot;,
+      &quot;role&quot;: &quot;legacy_readme&quot;,
+      &quot;sha256&quot;: &quot;5c5e6b75c661f6da6f278fc3c467f3674db8229aa1efbe389f05b95982d14a52&quot;,
+      &quot;size&quot;: 246
+    },
+    {
+      &quot;path&quot;: &quot;case.json&quot;,
+      &quot;role&quot;: &quot;original_case&quot;,
+      &quot;sha256&quot;: &quot;15df2d2af76c13bf0c85e67754c5da95a972a516dcaa0c31ba32cfdf2c2a77b4&quot;,
+      &quot;size&quot;: 1460
+    },
+    {
+      &quot;path&quot;: &quot;faults.json&quot;,
+      &quot;role&quot;: &quot;fault_schedule&quot;,
+      &quot;sha256&quot;: &quot;09cef752f877d7a044dde4eeffb1e13dfe8259cfaf3e75a71e3ce3221d27593a&quot;,
+      &quot;size&quot;: 121
+    },
+    {
+      &quot;path&quot;: &quot;final-world.json&quot;,
+      &quot;role&quot;: &quot;final_world&quot;,
+      &quot;sha256&quot;: &quot;f9d036736fb9180ef0c93bd4ede50e5c28e2d83ff1b2392c2dd84a998a817e3a&quot;,
+      &quot;size&quot;: 1181
+    },
+    {
+      &quot;path&quot;: &quot;initial-world.json&quot;,
+      &quot;role&quot;: &quot;initial_world&quot;,
+      &quot;sha256&quot;: &quot;1fc4efc1d71dd436adab430de8d9321165a24abcc9db033e77d723dbaf0a5352&quot;,
+      &quot;size&quot;: 859
+    },
+    {
+      &quot;path&quot;: &quot;minimized-case.json&quot;,
+      &quot;role&quot;: &quot;minimized_case&quot;,
+      &quot;sha256&quot;: &quot;833bc3c13660dfa83c84a7a02dba88412b9618814dc3ba60f7014d38d0e70e83&quot;,
+      &quot;size&quot;: 952
+    },
+    {
+      &quot;path&quot;: &quot;reduction-report.json&quot;,
+      &quot;role&quot;: &quot;reduction_report&quot;,
+      &quot;sha256&quot;: &quot;8684aed7b39b799e07d6728da1f3d0f36e604935136bb1eb25d0dc3dce7233eb&quot;,
+      &quot;size&quot;: 8404
+    },
+    {
+      &quot;path&quot;: &quot;reproduce.md&quot;,
+      &quot;role&quot;: &quot;reproduction_instructions&quot;,
+      &quot;sha256&quot;: &quot;4b6cb234a8012987a2731b6077d2ff63ea12481550f4ea4bf59cc3184e9c6e67&quot;,
+      &quot;size&quot;: 392
+    },
+    {
+      &quot;path&quot;: &quot;result.json&quot;,
+      &quot;role&quot;: &quot;trial_result&quot;,
+      &quot;sha256&quot;: &quot;61156e26cf13e42a4d8ffa58f13606c5c5ed3d6fa42d8dfe7354457b78d72b09&quot;,
+      &quot;size&quot;: 7050
+    },
+    {
+      &quot;path&quot;: &quot;trace.json&quot;,
+      &quot;role&quot;: &quot;trace&quot;,
+      &quot;sha256&quot;: &quot;c2cbd37a55ce3eae5d38f11fc2b31dafbd0f12fc06f2d110b8dd0fc88712aced&quot;,
+      &quot;size&quot;: 1543
+    },
+    {
+      &quot;path&quot;: &quot;trace.jsonl&quot;,
+      &quot;role&quot;: &quot;legacy_trace&quot;,
+      &quot;sha256&quot;: &quot;0ed7989ad7b1e01aabf4e674d3bf4f89af92f7799975949559ce2d48a75d12e9&quot;,
+      &quot;size&quot;: 1049
+    },
+    {
+      &quot;path&quot;: &quot;violations.json&quot;,
+      &quot;role&quot;: &quot;violations&quot;,
+      &quot;sha256&quot;: &quot;e5250f2aa112514a6d5ff62b2ea2e4508be6815f2d4efd08f3f023ffa96a493a&quot;,
+      &quot;size&quot;: 550
+    }
+  ],
+  &quot;minimized&quot;: true,
+  &quot;primary_failure_category&quot;: &quot;contract&quot;,
+  &quot;reproducer_id&quot;: &quot;agent-effects.examples.refund/naive/v1&quot;,
+  &quot;schema_version&quot;: &quot;agent-effects.failure/v1alpha1&quot;,
+  &quot;signature&quot;: [
+    &quot;duplicate_business_effect&quot;,
+    &quot;refund_cardinality&quot;
+  ],
+  &quot;subject&quot;: &quot;examples.refund&quot;,
+  &quot;test_ids&quot;: [
+    &quot;refund-lost-ack&quot;
+  ],
+  &quot;toolkit_version&quot;: &quot;0.1.0a1&quot;
+}</code></pre></details><details><summary>case.json</summary><pre><code>{
+  &quot;actor&quot;: {
+    &quot;id&quot;: &quot;ops-001&quot;,
+    &quot;roles&quot;: [
+      &quot;refund_operator&quot;
+    ]
+  },
+  &quot;faults&quot;: [
+    {
+      &quot;metadata&quot;: {},
+      &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;operation&quot;: &quot;issue_refund&quot;
+    }
+  ],
+  &quot;goal&quot;: {
+    &quot;amount_cents&quot;: 5000,
+    &quot;payment_id&quot;: &quot;pay-001&quot;,
+    &quot;type&quot;: &quot;refund_payment&quot;
+  },
+  &quot;id&quot;: &quot;refund-lost-ack&quot;,
+  &quot;metadata&quot;: {},
+  &quot;schema_version&quot;: &quot;agent-effects.case/v1alpha1&quot;,
+  &quot;seed&quot;: 0,
+  &quot;subject&quot;: &quot;examples.refund&quot;,
+  &quot;world&quot;: {
+    &quot;approvals&quot;: {
+      &quot;pay-001&quot;: true
+    },
+    &quot;customers&quot;: [
+      {
+        &quot;email&quot;: &quot;avery@example.test&quot;,
+        &quot;id&quot;: &quot;cus-001&quot;,
+        &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+        &quot;name&quot;: &quot;Avery Chen&quot;,
+        &quot;ssn&quot;: &quot;000-00-0000&quot;
+      }
+    ],
+    &quot;noise&quot;: [
+      {
+        &quot;id&quot;: &quot;noise-000&quot;,
+        &quot;value&quot;: 0
+      },
+      {
+        &quot;id&quot;: &quot;noise-001&quot;,
+        &quot;value&quot;: 1
+      },
+      {
+        &quot;id&quot;: &quot;noise-002&quot;,
+        &quot;value&quot;: 2
+      },
+      {
+        &quot;id&quot;: &quot;noise-003&quot;,
+        &quot;value&quot;: 3
+      },
+      {
+        &quot;id&quot;: &quot;noise-004&quot;,
+        &quot;value&quot;: 4
+      },
+      {
+        &quot;id&quot;: &quot;noise-005&quot;,
+        &quot;value&quot;: 5
+      },
+      {
+        &quot;id&quot;: &quot;noise-006&quot;,
+        &quot;value&quot;: 6
+      },
+      {
+        &quot;id&quot;: &quot;noise-007&quot;,
+        &quot;value&quot;: 7
+      }
+    ],
+    &quot;payments&quot;: [
+      {
+        &quot;amount_cents&quot;: 5000,
+        &quot;customer_id&quot;: &quot;cus-001&quot;,
+        &quot;id&quot;: &quot;pay-001&quot;,
+        &quot;status&quot;: &quot;captured&quot;
+      }
+    ],
+    &quot;refunds&quot;: []
+  }
+}</code></pre></details><details><summary>minimized-case.json</summary><pre><code>{
+  &quot;actor&quot;: {
+    &quot;id&quot;: &quot;ops-001&quot;,
+    &quot;roles&quot;: [
+      &quot;refund_operator&quot;
+    ]
+  },
+  &quot;faults&quot;: [
+    {
+      &quot;metadata&quot;: {},
+      &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;operation&quot;: &quot;issue_refund&quot;
+    }
+  ],
+  &quot;goal&quot;: {
+    &quot;amount_cents&quot;: 5000,
+    &quot;payment_id&quot;: &quot;pay-001&quot;,
+    &quot;type&quot;: &quot;refund_payment&quot;
+  },
+  &quot;id&quot;: &quot;refund-lost-ack&quot;,
+  &quot;metadata&quot;: {},
+  &quot;schema_version&quot;: &quot;agent-effects.case/v1alpha1&quot;,
+  &quot;seed&quot;: 0,
+  &quot;subject&quot;: &quot;examples.refund&quot;,
+  &quot;world&quot;: {
+    &quot;approvals&quot;: {
+      &quot;pay-001&quot;: true
+    },
+    &quot;customers&quot;: [
+      {
+        &quot;email&quot;: &quot;avery@example.test&quot;,
+        &quot;id&quot;: &quot;cus-001&quot;,
+        &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+        &quot;name&quot;: &quot;Avery Chen&quot;,
+        &quot;ssn&quot;: &quot;000-00-0000&quot;
+      }
+    ],
+    &quot;noise&quot;: [],
+    &quot;payments&quot;: [
+      {
+        &quot;amount_cents&quot;: 5000,
+        &quot;customer_id&quot;: &quot;cus-001&quot;,
+        &quot;id&quot;: &quot;pay-001&quot;,
+        &quot;status&quot;: &quot;captured&quot;
+      }
+    ],
+    &quot;refunds&quot;: []
+  }
+}</code></pre></details><details><summary>initial-world.json</summary><pre><code>{
+  &quot;approvals&quot;: {
+    &quot;pay-001&quot;: true
+  },
+  &quot;customers&quot;: [
+    {
+      &quot;email&quot;: &quot;avery@example.test&quot;,
+      &quot;id&quot;: &quot;cus-001&quot;,
+      &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+      &quot;name&quot;: &quot;Avery Chen&quot;,
+      &quot;ssn&quot;: &quot;000-00-0000&quot;
+    }
+  ],
+  &quot;noise&quot;: [
+    {
+      &quot;id&quot;: &quot;noise-000&quot;,
+      &quot;value&quot;: 0
+    },
+    {
+      &quot;id&quot;: &quot;noise-001&quot;,
+      &quot;value&quot;: 1
+    },
+    {
+      &quot;id&quot;: &quot;noise-002&quot;,
+      &quot;value&quot;: 2
+    },
+    {
+      &quot;id&quot;: &quot;noise-003&quot;,
+      &quot;value&quot;: 3
+    },
+    {
+      &quot;id&quot;: &quot;noise-004&quot;,
+      &quot;value&quot;: 4
+    },
+    {
+      &quot;id&quot;: &quot;noise-005&quot;,
+      &quot;value&quot;: 5
+    },
+    {
+      &quot;id&quot;: &quot;noise-006&quot;,
+      &quot;value&quot;: 6
+    },
+    {
+      &quot;id&quot;: &quot;noise-007&quot;,
+      &quot;value&quot;: 7
+    }
+  ],
+  &quot;payments&quot;: [
+    {
+      &quot;amount_cents&quot;: 5000,
+      &quot;customer_id&quot;: &quot;cus-001&quot;,
+      &quot;id&quot;: &quot;pay-001&quot;,
+      &quot;status&quot;: &quot;captured&quot;
+    }
+  ],
+  &quot;refunds&quot;: []
+}</code></pre></details><details><summary>final-world.json</summary><pre><code>{
+  &quot;approvals&quot;: {
+    &quot;pay-001&quot;: true
+  },
+  &quot;customers&quot;: [
+    {
+      &quot;email&quot;: &quot;avery@example.test&quot;,
+      &quot;id&quot;: &quot;cus-001&quot;,
+      &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+      &quot;name&quot;: &quot;Avery Chen&quot;,
+      &quot;ssn&quot;: &quot;000-00-0000&quot;
+    }
+  ],
+  &quot;noise&quot;: [
+    {
+      &quot;id&quot;: &quot;noise-000&quot;,
+      &quot;value&quot;: 0
+    },
+    {
+      &quot;id&quot;: &quot;noise-001&quot;,
+      &quot;value&quot;: 1
+    },
+    {
+      &quot;id&quot;: &quot;noise-002&quot;,
+      &quot;value&quot;: 2
+    },
+    {
+      &quot;id&quot;: &quot;noise-003&quot;,
+      &quot;value&quot;: 3
+    },
+    {
+      &quot;id&quot;: &quot;noise-004&quot;,
+      &quot;value&quot;: 4
+    },
+    {
+      &quot;id&quot;: &quot;noise-005&quot;,
+      &quot;value&quot;: 5
+    },
+    {
+      &quot;id&quot;: &quot;noise-006&quot;,
+      &quot;value&quot;: 6
+    },
+    {
+      &quot;id&quot;: &quot;noise-007&quot;,
+      &quot;value&quot;: 7
+    }
+  ],
+  &quot;payments&quot;: [
+    {
+      &quot;amount_cents&quot;: 5000,
+      &quot;customer_id&quot;: &quot;cus-001&quot;,
+      &quot;id&quot;: &quot;pay-001&quot;,
+      &quot;status&quot;: &quot;captured&quot;
+    }
+  ],
+  &quot;refunds&quot;: [
+    {
+      &quot;amount_cents&quot;: 5000,
+      &quot;id&quot;: &quot;re_001&quot;,
+      &quot;idempotency_key&quot;: &quot;attempt-1&quot;,
+      &quot;payment_id&quot;: &quot;pay-001&quot;,
+      &quot;status&quot;: &quot;succeeded&quot;
+    },
+    {
+      &quot;amount_cents&quot;: 5000,
+      &quot;id&quot;: &quot;re_002&quot;,
+      &quot;idempotency_key&quot;: &quot;attempt-2&quot;,
+      &quot;payment_id&quot;: &quot;pay-001&quot;,
+      &quot;status&quot;: &quot;succeeded&quot;
+    }
+  ]
+}</code></pre></details><details><summary>faults.json</summary><pre><code>[
+  {
+    &quot;metadata&quot;: {},
+    &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+    &quot;occurrence&quot;: 1,
+    &quot;operation&quot;: &quot;issue_refund&quot;
+  }
+]</code></pre></details><details><summary>trace.json</summary><pre><code>[
+  {
+    &quot;data&quot;: {
+      &quot;payment_id&quot;: &quot;pay-001&quot;
+    },
+    &quot;kind&quot;: &quot;read&quot;,
+    &quot;operation&quot;: &quot;get_payment&quot;,
+    &quot;sequence&quot;: 0
+  },
+  {
+    &quot;data&quot;: {
+      &quot;approved&quot;: true,
+      &quot;payment_id&quot;: &quot;pay-001&quot;
+    },
+    &quot;kind&quot;: &quot;read&quot;,
+    &quot;operation&quot;: &quot;check_approval&quot;,
+    &quot;sequence&quot;: 1
+  },
+  {
+    &quot;data&quot;: {
+      &quot;actor_id&quot;: &quot;ops-001&quot;,
+      &quot;allowed&quot;: true
+    },
+    &quot;kind&quot;: &quot;policy&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 2
+  },
+  {
+    &quot;data&quot;: {
+      &quot;amount_cents&quot;: 5000,
+      &quot;idempotency_key&quot;: &quot;attempt-1&quot;,
+      &quot;occurrence&quot;: 1,
+      &quot;payment_id&quot;: &quot;pay-001&quot;
+    },
+    &quot;kind&quot;: &quot;tool_call&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 3
+  },
+  {
+    &quot;data&quot;: {
+      &quot;occurrence&quot;: 1,
+      &quot;refund_id&quot;: &quot;re_001&quot;
+    },
+    &quot;kind&quot;: &quot;commit&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 4
+  },
+  {
+    &quot;data&quot;: {
+      &quot;committed&quot;: true,
+      &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+      &quot;occurrence&quot;: 1
+    },
+    &quot;kind&quot;: &quot;fault&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 5
+  },
+  {
+    &quot;data&quot;: {
+      &quot;actor_id&quot;: &quot;ops-001&quot;,
+      &quot;allowed&quot;: true
+    },
+    &quot;kind&quot;: &quot;policy&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 6
+  },
+  {
+    &quot;data&quot;: {
+      &quot;amount_cents&quot;: 5000,
+      &quot;idempotency_key&quot;: &quot;attempt-2&quot;,
+      &quot;occurrence&quot;: 2,
+      &quot;payment_id&quot;: &quot;pay-001&quot;
+    },
+    &quot;kind&quot;: &quot;tool_call&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 7
+  },
+  {
+    &quot;data&quot;: {
+      &quot;occurrence&quot;: 2,
+      &quot;refund_id&quot;: &quot;re_002&quot;
+    },
+    &quot;kind&quot;: &quot;commit&quot;,
+    &quot;operation&quot;: &quot;issue_refund&quot;,
+    &quot;sequence&quot;: 8
+  }
+]</code></pre></details><details><summary>violations.json</summary><pre><code>[
+  {
+    &quot;code&quot;: &quot;refund_cardinality&quot;,
+    &quot;contract&quot;: &quot;refund outcome&quot;,
+    &quot;details&quot;: {
+      &quot;actual&quot;: 2,
+      &quot;expected&quot;: 1
+    },
+    &quot;message&quot;: &quot;The workflow must leave exactly one refund for the payment.&quot;,
+    &quot;path&quot;: &quot;$.refunds&quot;
+  },
+  {
+    &quot;code&quot;: &quot;duplicate_business_effect&quot;,
+    &quot;contract&quot;: &quot;business uniqueness&quot;,
+    &quot;details&quot;: {
+      &quot;duplicate_keys&quot;: [
+        [
+          &quot;pay-001&quot;,
+          5000
+        ]
+      ]
+    },
+    &quot;message&quot;: &quot;Multiple refund records represent the same business effect.&quot;,
+    &quot;path&quot;: &quot;$.refunds&quot;
+  }
+]</code></pre></details><details><summary>result.json</summary><pre><code>{
+  &quot;adapter&quot;: {
+    &quot;kind&quot;: &quot;python&quot;,
+    &quot;module&quot;: &quot;agent_effects.adapters.callable&quot;,
+    &quot;name&quot;: &quot;naive&quot;,
+    &quot;qualname&quot;: &quot;CallableAgentAdapter&quot;
+  },
+  &quot;agent_name&quot;: &quot;naive&quot;,
+  &quot;agent_run&quot;: {
+    &quot;error_message&quot;: null,
+    &quot;error_type&quot;: null,
+    &quot;metadata&quot;: {},
+    &quot;output&quot;: &quot;Refund re_002 completed.&quot;,
+    &quot;status&quot;: &quot;completed&quot;
+  },
+  &quot;artifact_path&quot;: null,
+  &quot;case&quot;: {
+    &quot;actor&quot;: {
+      &quot;id&quot;: &quot;ops-001&quot;,
+      &quot;roles&quot;: [
+        &quot;refund_operator&quot;
+      ]
+    },
+    &quot;faults&quot;: [
+      {
+        &quot;metadata&quot;: {},
+        &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+        &quot;occurrence&quot;: 1,
+        &quot;operation&quot;: &quot;issue_refund&quot;
+      }
+    ],
+    &quot;goal&quot;: {
+      &quot;amount_cents&quot;: 5000,
+      &quot;payment_id&quot;: &quot;pay-001&quot;,
+      &quot;type&quot;: &quot;refund_payment&quot;
+    },
+    &quot;id&quot;: &quot;refund-lost-ack&quot;,
+    &quot;metadata&quot;: {},
+    &quot;schema_version&quot;: &quot;agent-effects.case/v1alpha1&quot;,
+    &quot;seed&quot;: 0,
+    &quot;subject&quot;: &quot;examples.refund&quot;,
+    &quot;world&quot;: {
+      &quot;approvals&quot;: {
+        &quot;pay-001&quot;: true
+      },
+      &quot;customers&quot;: [
+        {
+          &quot;email&quot;: &quot;avery@example.test&quot;,
+          &quot;id&quot;: &quot;cus-001&quot;,
+          &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+          &quot;name&quot;: &quot;Avery Chen&quot;,
+          &quot;ssn&quot;: &quot;000-00-0000&quot;
+        }
+      ],
+      &quot;noise&quot;: [
+        {
+          &quot;id&quot;: &quot;noise-000&quot;,
+          &quot;value&quot;: 0
+        },
+        {
+          &quot;id&quot;: &quot;noise-001&quot;,
+          &quot;value&quot;: 1
+        },
+        {
+          &quot;id&quot;: &quot;noise-002&quot;,
+          &quot;value&quot;: 2
+        },
+        {
+          &quot;id&quot;: &quot;noise-003&quot;,
+          &quot;value&quot;: 3
+        },
+        {
+          &quot;id&quot;: &quot;noise-004&quot;,
+          &quot;value&quot;: 4
+        },
+        {
+          &quot;id&quot;: &quot;noise-005&quot;,
+          &quot;value&quot;: 5
+        },
+        {
+          &quot;id&quot;: &quot;noise-006&quot;,
+          &quot;value&quot;: 6
+        },
+        {
+          &quot;id&quot;: &quot;noise-007&quot;,
+          &quot;value&quot;: 7
+        }
+      ],
+      &quot;payments&quot;: [
+        {
+          &quot;amount_cents&quot;: 5000,
+          &quot;customer_id&quot;: &quot;cus-001&quot;,
+          &quot;id&quot;: &quot;pay-001&quot;,
+          &quot;status&quot;: &quot;captured&quot;
+        }
+      ],
+      &quot;refunds&quot;: []
+    }
+  },
+  &quot;contract_ids&quot;: [
+    &quot;refund outcome&quot;,
+    &quot;business uniqueness&quot;,
+    &quot;least privilege reads&quot;
+  ],
+  &quot;contracts&quot;: {
+    &quot;passed&quot;: false,
+    &quot;violations&quot;: [
+      {
+        &quot;code&quot;: &quot;refund_cardinality&quot;,
+        &quot;contract&quot;: &quot;refund outcome&quot;,
+        &quot;details&quot;: {
+          &quot;actual&quot;: 2,
+          &quot;expected&quot;: 1
+        },
+        &quot;message&quot;: &quot;The workflow must leave exactly one refund for the payment.&quot;,
+        &quot;path&quot;: &quot;$.refunds&quot;
+      },
+      {
+        &quot;code&quot;: &quot;duplicate_business_effect&quot;,
+        &quot;contract&quot;: &quot;business uniqueness&quot;,
+        &quot;details&quot;: {
+          &quot;duplicate_keys&quot;: [
+            [
+              &quot;pay-001&quot;,
+              5000
+            ]
+          ]
+        },
+        &quot;message&quot;: &quot;Multiple refund records represent the same business effect.&quot;,
+        &quot;path&quot;: &quot;$.refunds&quot;
+      }
+    ]
+  },
+  &quot;elapsed_ms&quot;: 0.329459086060524,
+  &quot;events&quot;: [
+    {
+      &quot;data&quot;: {
+        &quot;payment_id&quot;: &quot;pay-001&quot;
+      },
+      &quot;kind&quot;: &quot;read&quot;,
+      &quot;operation&quot;: &quot;get_payment&quot;,
+      &quot;sequence&quot;: 0
+    },
+    {
+      &quot;data&quot;: {
+        &quot;approved&quot;: true,
+        &quot;payment_id&quot;: &quot;pay-001&quot;
+      },
+      &quot;kind&quot;: &quot;read&quot;,
+      &quot;operation&quot;: &quot;check_approval&quot;,
+      &quot;sequence&quot;: 1
+    },
+    {
+      &quot;data&quot;: {
+        &quot;actor_id&quot;: &quot;ops-001&quot;,
+        &quot;allowed&quot;: true
+      },
+      &quot;kind&quot;: &quot;policy&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 2
+    },
+    {
+      &quot;data&quot;: {
+        &quot;amount_cents&quot;: 5000,
+        &quot;idempotency_key&quot;: &quot;attempt-1&quot;,
+        &quot;occurrence&quot;: 1,
+        &quot;payment_id&quot;: &quot;pay-001&quot;
+      },
+      &quot;kind&quot;: &quot;tool_call&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 3
+    },
+    {
+      &quot;data&quot;: {
+        &quot;occurrence&quot;: 1,
+        &quot;refund_id&quot;: &quot;re_001&quot;
+      },
+      &quot;kind&quot;: &quot;commit&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 4
+    },
+    {
+      &quot;data&quot;: {
+        &quot;committed&quot;: true,
+        &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+        &quot;occurrence&quot;: 1
+      },
+      &quot;kind&quot;: &quot;fault&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 5
+    },
+    {
+      &quot;data&quot;: {
+        &quot;actor_id&quot;: &quot;ops-001&quot;,
+        &quot;allowed&quot;: true
+      },
+      &quot;kind&quot;: &quot;policy&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 6
+    },
+    {
+      &quot;data&quot;: {
+        &quot;amount_cents&quot;: 5000,
+        &quot;idempotency_key&quot;: &quot;attempt-2&quot;,
+        &quot;occurrence&quot;: 2,
+        &quot;payment_id&quot;: &quot;pay-001&quot;
+      },
+      &quot;kind&quot;: &quot;tool_call&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 7
+    },
+    {
+      &quot;data&quot;: {
+        &quot;occurrence&quot;: 2,
+        &quot;refund_id&quot;: &quot;re_002&quot;
+      },
+      &quot;kind&quot;: &quot;commit&quot;,
+      &quot;operation&quot;: &quot;issue_refund&quot;,
+      &quot;sequence&quot;: 8
+    }
+  ],
+  &quot;final_state&quot;: {
+    &quot;approvals&quot;: {
+      &quot;pay-001&quot;: true
+    },
+    &quot;customers&quot;: [
+      {
+        &quot;email&quot;: &quot;avery@example.test&quot;,
+        &quot;id&quot;: &quot;cus-001&quot;,
+        &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+        &quot;name&quot;: &quot;Avery Chen&quot;,
+        &quot;ssn&quot;: &quot;000-00-0000&quot;
+      }
+    ],
+    &quot;noise&quot;: [
+      {
+        &quot;id&quot;: &quot;noise-000&quot;,
+        &quot;value&quot;: 0
+      },
+      {
+        &quot;id&quot;: &quot;noise-001&quot;,
+        &quot;value&quot;: 1
+      },
+      {
+        &quot;id&quot;: &quot;noise-002&quot;,
+        &quot;value&quot;: 2
+      },
+      {
+        &quot;id&quot;: &quot;noise-003&quot;,
+        &quot;value&quot;: 3
+      },
+      {
+        &quot;id&quot;: &quot;noise-004&quot;,
+        &quot;value&quot;: 4
+      },
+      {
+        &quot;id&quot;: &quot;noise-005&quot;,
+        &quot;value&quot;: 5
+      },
+      {
+        &quot;id&quot;: &quot;noise-006&quot;,
+        &quot;value&quot;: 6
+      },
+      {
+        &quot;id&quot;: &quot;noise-007&quot;,
+        &quot;value&quot;: 7
+      }
+    ],
+    &quot;payments&quot;: [
+      {
+        &quot;amount_cents&quot;: 5000,
+        &quot;customer_id&quot;: &quot;cus-001&quot;,
+        &quot;id&quot;: &quot;pay-001&quot;,
+        &quot;status&quot;: &quot;captured&quot;
+      }
+    ],
+    &quot;refunds&quot;: [
+      {
+        &quot;amount_cents&quot;: 5000,
+        &quot;id&quot;: &quot;re_001&quot;,
+        &quot;idempotency_key&quot;: &quot;attempt-1&quot;,
+        &quot;payment_id&quot;: &quot;pay-001&quot;,
+        &quot;status&quot;: &quot;succeeded&quot;
+      },
+      {
+        &quot;amount_cents&quot;: 5000,
+        &quot;id&quot;: &quot;re_002&quot;,
+        &quot;idempotency_key&quot;: &quot;attempt-2&quot;,
+        &quot;payment_id&quot;: &quot;pay-001&quot;,
+        &quot;status&quot;: &quot;succeeded&quot;
+      }
+    ]
+  },
+  &quot;initial_state&quot;: {
+    &quot;approvals&quot;: {
+      &quot;pay-001&quot;: true
+    },
+    &quot;customers&quot;: [
+      {
+        &quot;email&quot;: &quot;avery@example.test&quot;,
+        &quot;id&quot;: &quot;cus-001&quot;,
+        &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+        &quot;name&quot;: &quot;Avery Chen&quot;,
+        &quot;ssn&quot;: &quot;000-00-0000&quot;
+      }
+    ],
+    &quot;noise&quot;: [
+      {
+        &quot;id&quot;: &quot;noise-000&quot;,
+        &quot;value&quot;: 0
+      },
+      {
+        &quot;id&quot;: &quot;noise-001&quot;,
+        &quot;value&quot;: 1
+      },
+      {
+        &quot;id&quot;: &quot;noise-002&quot;,
+        &quot;value&quot;: 2
+      },
+      {
+        &quot;id&quot;: &quot;noise-003&quot;,
+        &quot;value&quot;: 3
+      },
+      {
+        &quot;id&quot;: &quot;noise-004&quot;,
+        &quot;value&quot;: 4
+      },
+      {
+        &quot;id&quot;: &quot;noise-005&quot;,
+        &quot;value&quot;: 5
+      },
+      {
+        &quot;id&quot;: &quot;noise-006&quot;,
+        &quot;value&quot;: 6
+      },
+      {
+        &quot;id&quot;: &quot;noise-007&quot;,
+        &quot;value&quot;: 7
+      }
+    ],
+    &quot;payments&quot;: [
+      {
+        &quot;amount_cents&quot;: 5000,
+        &quot;customer_id&quot;: &quot;cus-001&quot;,
+        &quot;id&quot;: &quot;pay-001&quot;,
+        &quot;status&quot;: &quot;captured&quot;
+      }
+    ],
+    &quot;refunds&quot;: []
+  },
+  &quot;lifecycle_failures&quot;: [],
+  &quot;reproducer_id&quot;: &quot;agent-effects.examples.refund/naive/v1&quot;,
+  &quot;schema_version&quot;: &quot;agent-effects.result/v1alpha1&quot;
+}</code></pre></details><details><summary>reduction report</summary><pre><code>{
+  &quot;accepted_reductions&quot;: [
+    {
+      &quot;after_digest&quot;: &quot;3eb537ee6f290ead369b77930456996936f69fed748724e4826c34da1e4d47e2&quot;,
+      &quot;after_size&quot;: 763,
+      &quot;before_digest&quot;: &quot;e8f2c3b4fbe88a7d53c76cced700c2bde52c59bbb25bef9814837be8672e1c5b&quot;,
+      &quot;before_size&quot;: 879,
+      &quot;explanation&quot;: &quot;removed list indices (0, 1, 2, 3) at world(&#x27;noise&#x27;,)&quot;,
+      &quot;reducer&quot;: &quot;world_list_ddmin&quot;
+    },
+    {
+      &quot;after_digest&quot;: &quot;4dda59591af507e7006b1384b53a32bffaf2da843f064d545d1f465820e04166&quot;,
+      &quot;after_size&quot;: 705,
+      &quot;before_digest&quot;: &quot;3eb537ee6f290ead369b77930456996936f69fed748724e4826c34da1e4d47e2&quot;,
+      &quot;before_size&quot;: 763,
+      &quot;explanation&quot;: &quot;removed list indices (0, 1) at world(&#x27;noise&#x27;,)&quot;,
+      &quot;reducer&quot;: &quot;world_list_ddmin&quot;
+    },
+    {
+      &quot;after_digest&quot;: &quot;f2b7a29024cb2fdd1f82ce097d4195d44f1a236c70a63f2e48eb27a4e20e99cc&quot;,
+      &quot;after_size&quot;: 676,
+      &quot;before_digest&quot;: &quot;4dda59591af507e7006b1384b53a32bffaf2da843f064d545d1f465820e04166&quot;,
+      &quot;before_size&quot;: 705,
+      &quot;explanation&quot;: &quot;removed list indices (0,) at world(&#x27;noise&#x27;,)&quot;,
+      &quot;reducer&quot;: &quot;world_list_ddmin&quot;
+    },
+    {
+      &quot;after_digest&quot;: &quot;d0bd5b7021afa74e007aff020125089f58c02d6fd44f21a56b72474814f2cf85&quot;,
+      &quot;after_size&quot;: 648,
+      &quot;before_digest&quot;: &quot;f2b7a29024cb2fdd1f82ce097d4195d44f1a236c70a63f2e48eb27a4e20e99cc&quot;,
+      &quot;before_size&quot;: 676,
+      &quot;explanation&quot;: &quot;removed list indices (0,) at world(&#x27;noise&#x27;,)&quot;,
+      &quot;reducer&quot;: &quot;world_list_ddmin&quot;
+    }
+  ],
+  &quot;baseline_observations&quot;: [
+    {
+      &quot;signature&quot;: {
+        &quot;contract_failures&quot;: [
+          {
+            &quot;contract_id&quot;: &quot;business uniqueness&quot;,
+            &quot;count&quot;: 1,
+            &quot;violation_code&quot;: &quot;duplicate_business_effect&quot;
+          },
+          {
+            &quot;contract_id&quot;: &quot;refund outcome&quot;,
+            &quot;count&quot;: 1,
+            &quot;violation_code&quot;: &quot;refund_cardinality&quot;
+          }
+        ],
+        &quot;exception_type&quot;: null,
+        &quot;primary_category&quot;: &quot;contract&quot;,
+        &quot;primary_stage&quot;: null,
+        &quot;schema_version&quot;: &quot;agent-effects.signature/v1alpha1&quot;,
+        &quot;stable_error_code&quot;: null
+      },
+      &quot;trace&quot;: [
+        {
+          &quot;data&quot;: {
+            &quot;payment_id&quot;: &quot;pay-001&quot;
+          },
+          &quot;kind&quot;: &quot;read&quot;,
+          &quot;operation&quot;: &quot;get_payment&quot;,
+          &quot;sequence&quot;: 0
+        },
+        {
+          &quot;data&quot;: {
+            &quot;approved&quot;: true,
+            &quot;payment_id&quot;: &quot;pay-001&quot;
+          },
+          &quot;kind&quot;: &quot;read&quot;,
+          &quot;operation&quot;: &quot;check_approval&quot;,
+          &quot;sequence&quot;: 1
+        },
+        {
+          &quot;data&quot;: {
+            &quot;actor_id&quot;: &quot;ops-001&quot;,
+            &quot;allowed&quot;: true
+          },
+          &quot;kind&quot;: &quot;policy&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 2
+        },
+        {
+          &quot;data&quot;: {
+            &quot;amount_cents&quot;: 5000,
+            &quot;idempotency_key&quot;: &quot;attempt-1&quot;,
+            &quot;occurrence&quot;: 1,
+            &quot;payment_id&quot;: &quot;pay-001&quot;
+          },
+          &quot;kind&quot;: &quot;tool_call&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 3
+        },
+        {
+          &quot;data&quot;: {
+            &quot;occurrence&quot;: 1,
+            &quot;refund_id&quot;: &quot;re_001&quot;
+          },
+          &quot;kind&quot;: &quot;commit&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 4
+        },
+        {
+          &quot;data&quot;: {
+            &quot;committed&quot;: true,
+            &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+            &quot;occurrence&quot;: 1
+          },
+          &quot;kind&quot;: &quot;fault&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 5
+        },
+        {
+          &quot;data&quot;: {
+            &quot;actor_id&quot;: &quot;ops-001&quot;,
+            &quot;allowed&quot;: true
+          },
+          &quot;kind&quot;: &quot;policy&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 6
+        },
+        {
+          &quot;data&quot;: {
+            &quot;amount_cents&quot;: 5000,
+            &quot;idempotency_key&quot;: &quot;attempt-2&quot;,
+            &quot;occurrence&quot;: 2,
+            &quot;payment_id&quot;: &quot;pay-001&quot;
+          },
+          &quot;kind&quot;: &quot;tool_call&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 7
+        },
+        {
+          &quot;data&quot;: {
+            &quot;occurrence&quot;: 2,
+            &quot;refund_id&quot;: &quot;re_002&quot;
+          },
+          &quot;kind&quot;: &quot;commit&quot;,
+          &quot;operation&quot;: &quot;issue_refund&quot;,
+          &quot;sequence&quot;: 8
+        }
+      ]
+    }
+  ],
+  &quot;cache_hits&quot;: 1,
+  &quot;candidate_evaluations&quot;: 5,
+  &quot;confirm_signature_runs&quot;: 1,
+  &quot;diagnostic&quot;: &quot;No smaller valid same-signature candidate was found by the configured reducers within the configured budgets. This is a local guarantee over generated candidates, not a claim of global minimality.&quot;,
+  &quot;different_failures&quot;: 2,
+  &quot;elapsed_ms&quot;: 3.3973329700529575,
+  &quot;evaluation_budget&quot;: 250,
+  &quot;evaluation_budget_exhausted&quot;: false,
+  &quot;final_case_digest&quot;: &quot;d0bd5b7021afa74e007aff020125089f58c02d6fd44f21a56b72474814f2cf85&quot;,
+  &quot;final_size&quot;: 648,
+  &quot;guarantee&quot;: &quot;locally_minimal_under_configured_reducers&quot;,
+  &quot;initial_case_digest&quot;: &quot;e8f2c3b4fbe88a7d53c76cced700c2bde52c59bbb25bef9814837be8672e1c5b&quot;,
+  &quot;initial_size&quot;: 879,
+  &quot;invalid_candidates_skipped&quot;: 0,
+  &quot;minimized&quot;: {
+    &quot;actor&quot;: {
+      &quot;id&quot;: &quot;ops-001&quot;,
+      &quot;roles&quot;: [
+        &quot;refund_operator&quot;
+      ]
+    },
+    &quot;faults&quot;: [
+      {
+        &quot;metadata&quot;: {},
+        &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+        &quot;occurrence&quot;: 1,
+        &quot;operation&quot;: &quot;issue_refund&quot;
+      }
+    ],
+    &quot;goal&quot;: {
+      &quot;amount_cents&quot;: 5000,
+      &quot;payment_id&quot;: &quot;pay-001&quot;,
+      &quot;type&quot;: &quot;refund_payment&quot;
+    },
+    &quot;id&quot;: &quot;refund-lost-ack&quot;,
+    &quot;metadata&quot;: {},
+    &quot;schema_version&quot;: &quot;agent-effects.case/v1alpha1&quot;,
+    &quot;seed&quot;: 0,
+    &quot;subject&quot;: &quot;examples.refund&quot;,
+    &quot;world&quot;: {
+      &quot;approvals&quot;: {
+        &quot;pay-001&quot;: true
+      },
+      &quot;customers&quot;: [
+        {
+          &quot;email&quot;: &quot;avery@example.test&quot;,
+          &quot;id&quot;: &quot;cus-001&quot;,
+          &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+          &quot;name&quot;: &quot;Avery Chen&quot;,
+          &quot;ssn&quot;: &quot;000-00-0000&quot;
+        }
+      ],
+      &quot;noise&quot;: [],
+      &quot;payments&quot;: [
+        {
+          &quot;amount_cents&quot;: 5000,
+          &quot;customer_id&quot;: &quot;cus-001&quot;,
+          &quot;id&quot;: &quot;pay-001&quot;,
+          &quot;status&quot;: &quot;captured&quot;
+        }
+      ],
+      &quot;refunds&quot;: []
+    }
+  },
+  &quot;original&quot;: {
+    &quot;actor&quot;: {
+      &quot;id&quot;: &quot;ops-001&quot;,
+      &quot;roles&quot;: [
+        &quot;refund_operator&quot;
+      ]
+    },
+    &quot;faults&quot;: [
+      {
+        &quot;metadata&quot;: {},
+        &quot;mode&quot;: &quot;timeout_after_commit&quot;,
+        &quot;occurrence&quot;: 1,
+        &quot;operation&quot;: &quot;issue_refund&quot;
+      }
+    ],
+    &quot;goal&quot;: {
+      &quot;amount_cents&quot;: 5000,
+      &quot;payment_id&quot;: &quot;pay-001&quot;,
+      &quot;type&quot;: &quot;refund_payment&quot;
+    },
+    &quot;id&quot;: &quot;refund-lost-ack&quot;,
+    &quot;metadata&quot;: {},
+    &quot;schema_version&quot;: &quot;agent-effects.case/v1alpha1&quot;,
+    &quot;seed&quot;: 0,
+    &quot;subject&quot;: &quot;examples.refund&quot;,
+    &quot;world&quot;: {
+      &quot;approvals&quot;: {
+        &quot;pay-001&quot;: true
+      },
+      &quot;customers&quot;: [
+        {
+          &quot;email&quot;: &quot;avery@example.test&quot;,
+          &quot;id&quot;: &quot;cus-001&quot;,
+          &quot;medical_note&quot;: &quot;synthetic test fixture&quot;,
+          &quot;name&quot;: &quot;Avery Chen&quot;,
+          &quot;ssn&quot;: &quot;000-00-0000&quot;
+        }
+      ],
+      &quot;noise&quot;: [
+        {
+          &quot;id&quot;: &quot;noise-000&quot;,
+          &quot;value&quot;: 0
+        },
+        {
+          &quot;id&quot;: &quot;noise-001&quot;,
+          &quot;value&quot;: 1
+        },
+        {
+          &quot;id&quot;: &quot;noise-002&quot;,
+          &quot;value&quot;: 2
+        },
+        {
+          &quot;id&quot;: &quot;noise-003&quot;,
+          &quot;value&quot;: 3
+        },
+        {
+          &quot;id&quot;: &quot;noise-004&quot;,
+          &quot;value&quot;: 4
+        },
+        {
+          &quot;id&quot;: &quot;noise-005&quot;,
+          &quot;value&quot;: 5
+        },
+        {
+          &quot;id&quot;: &quot;noise-006&quot;,
+          &quot;value&quot;: 6
+        },
+        {
+          &quot;id&quot;: &quot;noise-007&quot;,
+          &quot;value&quot;: 7
+        }
+      ],
+      &quot;payments&quot;: [
+        {
+          &quot;amount_cents&quot;: 5000,
+          &quot;customer_id&quot;: &quot;cus-001&quot;,
+          &quot;id&quot;: &quot;pay-001&quot;,
+          &quot;status&quot;: &quot;captured&quot;
+        }
+      ],
+      &quot;refunds&quot;: []
+    }
+  },
+  &quot;reducers_used&quot;: [
+    &quot;world_list_ddmin&quot;,
+    &quot;fault_schedule_ddmin&quot;
+  ],
+  &quot;schema_version&quot;: &quot;agent-effects.reduction/v1alpha1&quot;,
+  &quot;stop_reason&quot;: &quot;locally_minimal&quot;,
+  &quot;target_signature&quot;: {
+    &quot;contract_failures&quot;: [
+      {
+        &quot;contract_id&quot;: &quot;business uniqueness&quot;,
+        &quot;count&quot;: 1,
+        &quot;violation_code&quot;: &quot;duplicate_business_effect&quot;
+      },
+      {
+        &quot;contract_id&quot;: &quot;refund outcome&quot;,
+        &quot;count&quot;: 1,
+        &quot;violation_code&quot;: &quot;refund_cardinality&quot;
+      }
+    ],
+    &quot;exception_type&quot;: null,
+    &quot;primary_category&quot;: &quot;contract&quot;,
+    &quot;primary_stage&quot;: null,
+    &quot;schema_version&quot;: &quot;agent-effects.signature/v1alpha1&quot;,
+    &quot;stable_error_code&quot;: null
+  },
+  &quot;time_budget_exhausted&quot;: false,
+  &quot;time_budget_ms&quot;: null,
+  &quot;validity_predicate&quot;: &quot;agent-effects.examples.refund/is_valid_refund_case/v1&quot;
+}</code></pre></details></section>
+  <footer>Bundle toolkit version: Agent Effects Testkit 0.1.0a1. This report was derived locally from content verified for integrity and internal consistency. Unsigned hashes do not authenticate provenance.</footer>
+</main>
+</body>
+</html>

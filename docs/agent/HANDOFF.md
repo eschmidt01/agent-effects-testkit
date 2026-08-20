@@ -1,59 +1,74 @@
 # Implementation handoff
 
-Task: AE-003, AE-004, and minimum viable Phase 6
-Status: v0.1.0a1 public alpha released; external quickstart timing open
+Task: AE-201 — `v0.1.0a2` visual failure report
+Status: locally complete on `feat/visual-failure-report`; pull-request CI and
+review remain release gates
 
 Changed:
 
-- added stable typed contract/lifecycle failure signatures and custom extractors;
-- added sequential hierarchical ddmin, composable reducers, canonical caching,
-  confirmation runs, validity enforcement, evaluation/time budgets, and reports;
-- added full-digest bundle identity, safe short-ID collision handling, reduction
-  reports, exact typed reproduction, and no-execution dry-run inspection;
-- corrected unsigned-hash security language across product and security docs;
-- added guarded passing and explicit lost-ack project templates through `init`;
-- added eight deterministic contract helpers and actionable runner diagnostics;
-- added onboarding documentation and installed-wheel clean-room automation;
-- bumped the candidate version to `0.1.0a1` and updated schema fixtures.
+- added deterministic `bundle report` rendering and local `--open` support;
+- added expected/observed state, fault table, durable-commit timeline,
+  violations, structured diff, reduction guarantee, reproduction boundary, and
+  collapsible raw verified JSON;
+- made report generation load a fully verified bundle, reject output inside the
+  bundle, escape untrusted strings, use no remote assets/scripts, and emit CSP;
+- connected `demo --agent naive --report` while retaining failure exit status;
+- bumped the candidate package version to `0.1.0a2` without tagging or release;
+- redesigned the README/docs around “Test the world your AI agent leaves
+  behind” and category-level positioning;
+- added light/dark transaction SVGs, reproducible 25-second terminal GIF,
+  report screenshot, social preview, public synthetic report, and provenance;
+- added a least-privilege GitHub Pages workflow, community issue drafts, and
+  launch-demo script; and
+- reordered the roadmap so the visual report precedes the single proposed
+  LangGraph integration.
 
 Validation:
 
 - `ruff check .` → passed;
-- `ruff format --check .` → 88 files already formatted;
-- `mypy --strict src tests` → passed, 41 source files;
-- `pytest` → 120 passed;
-- branch coverage → 92.17%, 90% floor;
+- `ruff format --check .` → 101 files already formatted;
+- `mypy --strict src tests` → passed, 44 source files;
+- `pytest` → 130 passed;
+- branch coverage → 91.61%, above the unchanged 90% floor;
 - `mkdocs build --strict` → passed;
-- `uv build` → sdist and wheel built;
-- `twine check dist/*` → both passed;
-- installed wheel starter → passed on Python 3.11.10, 3.12.14, and 3.13.0;
-- clean installed-wheel lost-ack workflow and pytest plugin smoke → passed;
-- 1,000-record ddmin benchmark → 12 evaluations, zero noise, one fault.
+- `python -m compileall -q src tests examples scripts` → passed;
+- `uv build` → `0.1.0a2` sdist and wheel built;
+- `twine check dist/*` → both distributions passed;
+- installed-wheel clean-room report/bundle/reproduction/safe-agent flow → passed;
+- Chrome structural/render check → two commits, one fault, two violations, no
+  scripts, remote references, console warnings, or subresource requests;
+- Firefox → not locally available.
 
 Decisions:
 
-- failure signatures exclude messages, paths, timestamps, random IDs, dynamic
-  record values, and irrelevant ordering;
-- complete SHA-256 digests are authoritative; 12-character IDs are display-only;
-- unsigned manifests establish internal consistency, not author authenticity;
-- candidate evaluation is sequential and always preceded by strict size and
-  validity checks;
-- normal scaffolds pass; only `--template lost-ack` intentionally fails.
+- reports are derived artifacts beside bundles, never unlisted files within
+  them;
+- report output is deterministic for a fixed verified bundle and renderer;
+- native HTML disclosure elements keep raw JSON usable without JavaScript;
+- no report code imports reproduction or entry-point discovery;
+- the renderer shows the bundle's toolkit version rather than claiming the
+  current renderer created the original failure; and
+- Pages deploys only from `main`; this feature branch does not change that
+  repository setting or publish a site.
 
 Risks / unresolved:
 
-- GitHub Actions run `32313705475` passed the complete Python 3.11–3.13,
-  quality, package, and clean-room matrix for tagged commit
-  `2c96341cd24ca24eedfa17dd7b4e662e5229d0a4`;
-- the GitHub prerelease and public-wheel clean-room workflow passed, but no
-  artifact was published to PyPI or TestPyPI;
-- no external engineer has timed the quickstart;
-- installed registered reproducers execute code and are not sandboxed;
-- adapters still own redaction, agent execution limits, and test-environment isolation;
-- custom signature extractors are supported by shrinking, but their code is not
-  serialized into portable bundles.
+- reports intentionally contain unredacted bundle evidence; adapters still own
+  redaction and CI owners control artifact visibility and retention;
+- the structured diff caps displayed rows at 1,000 while complete snapshots
+  remain available under raw JSON;
+- unsigned bundle hashes do not authenticate provenance;
+- the browser automation security boundary blocked direct `file://` navigation,
+  so Chrome visual validation used a loopback-only server with exactly one
+  document request; unit tests cover local file URI opening and zero report
+  subresources;
+- GitHub Pages must be enabled for GitHub Actions after the pull request is
+  merged if the repository setting is not already enabled; and
+- no external engineer has completed an independent onboarding attempt.
 
 Next:
 
-- run one independent external onboarding session, collect an alpha adoption
-  report, and create issues from the findings before starting LangGraph.
+- review and merge only after pull-request CI is green;
+- enable/verify GitHub Pages and set the prepared social preview manually;
+- collect one independent onboarding/adoption report and file findings; then
+- begin only the scoped optional LangGraph `0.2.0a1` milestone from ADR 0005.

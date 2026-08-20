@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-effects-testkit"
-version = "0.1.0a1"
-description = "Property-based transaction testing for tool-using AI agents"
+version = "0.1.0a2"
+description = "Test the world your AI agent leaves behind"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
