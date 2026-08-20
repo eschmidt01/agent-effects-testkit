@@ -1,6 +1,7 @@
 # Branding and naming
 
-“Agent Effects Testkit” is the public project name for
+“Agent Effects” is the public product name and “Agent Effects Testkit” remains
+the formal repository and Python distribution name for
 [`eschmidt01/agent-effects-testkit`](https://github.com/eschmidt01/agent-effects-testkit).
 The exact GitHub repository and PyPI distribution names were available when
 checked on 2026-08-19, and an exact-name public search found no obvious
@@ -17,6 +18,15 @@ Naming hygiene for future releases:
 5. document the final command and import-name migration if they change.
 
 The technical identity should survive a rename:
+
+> Agent Effects
+> Test the world your AI agent leaves behind.
+
+The concrete supporting line is:
+
+> Your agent said “refund complete.” Agent Effects found two refunds.
+
+Long-form technical description:
 
 > Property-based transaction testing for side-effecting AI agents: commit-aware
 > faults, deterministic outcome contracts, and reduced counterexamples.

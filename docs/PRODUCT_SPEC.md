@@ -2,6 +2,8 @@
 
 ## Product statement
 
+Agent Effects: test the world your AI agent leaves behind.
+
 Agent Effects Testkit is “property-based transaction testing for AI agents.” It
 helps application and reliability engineers reduce the valid world and
 fault schedule in which a tool-using agent leaves incorrect business state or
@@ -32,6 +34,8 @@ Secondary:
 5. Compare model/framework versions against the same business contracts without
    rewriting the test harness.
 6. Export a portable artifact that another engineer can inspect locally.
+7. See the failed transaction, state diff, and reduced case in a self-contained
+   local HTML report without executing a reproducer.
 
 ## Core user journey
 

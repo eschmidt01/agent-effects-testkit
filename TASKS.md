@@ -209,6 +209,14 @@ Mimic, Terrarium-like environments, or an application test server.
 Build a static, local-only viewer for state diffs, events, violations, and shrink
 steps. It must consume the portable bundle and have no server or account.
 
+- [x] `bundle report` verifies before rendering and never resolves a reproducer.
+- [x] The self-contained report includes faults, commit markers, violations,
+  state diff, reduction guarantee, reproduction commands, and raw JSON.
+- [x] CSP, escaping, tamper rejection, and script-injection tests cover the HTML
+  boundary.
+- [x] The packaged naive demo emits a report while preserving exit status `1`.
+- [x] A synthetic report and reproducible visual assets are published in docs.
+
 ### AE-202: Domain scaffold command
 
 `agent-effects init-domain refunds` should generate a world skeleton, validity

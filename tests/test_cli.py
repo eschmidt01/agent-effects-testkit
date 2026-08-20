@@ -42,7 +42,7 @@ def test_doctor() -> None:
 def test_version() -> None:
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "0.1.0a1" in result.stdout
+    assert "0.1.0a2" in result.stdout
 
 
 def test_demo_naive_writes_bundle_and_fails(tmp_path: Path) -> None:
@@ -54,6 +54,20 @@ def test_demo_naive_writes_bundle_and_fails(tmp_path: Path) -> None:
     assert result.exit_code == 1
     assert "duplicate_business_effect" in result.stdout
     assert any(output.iterdir())
+
+
+def test_demo_naive_report_explains_expected_and_observed_state(tmp_path: Path) -> None:
+    output = tmp_path / "failures"
+    result = runner.invoke(
+        app,
+        ["demo", "--agent", "naive", "--output", str(output), "--report"],
+    )
+
+    assert result.exit_code == 1
+    assert "expected 1 refund" in result.stdout
+    assert "observed 2 refunds" in result.stdout
+    assert "report:" in result.stdout
+    assert len(list(output.glob("*-report.html"))) == 1
 
 
 def test_demo_robust_passes(tmp_path: Path) -> None:

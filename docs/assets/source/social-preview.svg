@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Effects social preview</title><desc id="desc">Agent Effects tests the world an AI agent leaves behind, illustrated by one expected refund and two observed refunds after a lost acknowledgement.</desc>
+  <rect width="1280" height="640" fill="#101513"/><circle cx="1080" cy="116" r="240" fill="#12372f"/><circle cx="1160" cy="520" r="310" fill="#441e1b" opacity=".72"/>
+  <g font-family="ui-sans-serif,system-ui,sans-serif"><text x="76" y="112" fill="#4bd1b3" font-size="25" font-weight="800" letter-spacing="3">AGENT EFFECTS</text><text x="76" y="214" fill="#edf4ef" font-size="68" font-weight="850">Test the world your</text><text x="76" y="290" fill="#edf4ef" font-size="68" font-weight="850">AI agent leaves behind.</text><text x="76" y="364" fill="#a6b4ad" font-size="28">Refund committed → acknowledgement lost → retry</text>
+    <g transform="translate(76 420)"><rect width="330" height="112" rx="18" fill="#171d1a" stroke="#4bd1b3" stroke-width="2"/><text x="26" y="40" fill="#a6b4ad" font-size="20">expected</text><text x="26" y="87" fill="#4bd1b3" font-size="43" font-weight="850">1 refund</text></g>
+    <g transform="translate(430 420)"><rect width="330" height="112" rx="18" fill="#171d1a" stroke="#ff8a80" stroke-width="2"/><text x="26" y="40" fill="#a6b4ad" font-size="20">observed</text><text x="26" y="87" fill="#ff8a80" font-size="43" font-weight="850">2 refunds</text></g>
+    <text x="76" y="590" fill="#a6b4ad" font-size="21">Commit-aware faults · deterministic contracts · reduced regressions</text>
+  </g>
+</svg>

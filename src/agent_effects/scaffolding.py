@@ -32,7 +32,7 @@ NORMAL_TEMPLATE: dict[str, str] = {
         name = "agent-effects-starter"
         version = "0.0.0"
         requires-python = ">=3.11"
-        dependencies = ["agent-effects-testkit>=0.1.0a1"]
+        dependencies = ["agent-effects-testkit>=0.1.0a2"]
 
         [tool.pytest.ini_options]
         testpaths = ["tests"]
@@ -131,7 +131,7 @@ LOST_ACK_TEMPLATE: dict[str, str] = {
         name = "agent-effects-lost-ack-demo"
         version = "0.0.0"
         requires-python = ">=3.11"
-        dependencies = ["agent-effects-testkit>=0.1.0a1"]
+        dependencies = ["agent-effects-testkit>=0.1.0a2"]
 
         [tool.pytest.ini_options]
         testpaths = ["tests"]

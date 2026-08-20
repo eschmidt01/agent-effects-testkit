@@ -1,5 +1,5 @@
-site_name: Agent Effects Testkit
-site_description: Commit-aware semantic fault testing for side-effecting AI agents
+site_name: Agent Effects
+site_description: Test the world your AI agent leaves behind
 repo_name: eschmidt01/agent-effects-testkit
 repo_url: https://github.com/eschmidt01/agent-effects-testkit
 edit_uri: edit/main/docs/
@@ -7,9 +7,13 @@ edit_uri: edit/main/docs/
 theme:
   name: material
 
+markdown_extensions:
+  - attr_list
+
 nav:
   - Home: index.md
   - Getting started: GETTING_STARTED.md
+  - Static failure reports: REPORTS.md
   - Wrap a callable: WRAPPING_CALLABLES.md
   - Commit boundaries: COMMIT_BOUNDARIES.md
   - Contracts: CONTRACTS.md
@@ -17,6 +21,8 @@ nav:
   - Shrinking: SHRINKING.md
   - Troubleshooting: TROUBLESHOOTING.md
   - Alpha feedback: ALPHA_FEEDBACK.md
+  - Launch demo: LAUNCH_DEMO.md
+  - Community issues: COMMUNITY_ISSUES.md
   - External onboarding: EXTERNAL_ONBOARDING.md
   - Remote release procedure: REMOTE_RELEASE.md
   - Research validation: RESEARCH_VALIDATION.md

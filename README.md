@@ -1,135 +1,78 @@
-# Agent Effects Testkit
+# Agent Effects
 
-[![CI](https://github.com/eschmidt01/agent-effects-testkit/actions/workflows/ci.yml/badge.svg)](https://github.com/eschmidt01/agent-effects-testkit/actions/workflows/ci.yml)
-[![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-3776AB.svg)](https://www.python.org/downloads/)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Version: 0.1.0a1](https://img.shields.io/badge/version-0.1.0a1-orange.svg)](CHANGELOG.md)
+## Test the world your AI agent leaves behind.
 
-A pytest-native transaction-testing toolkit for engineers building AI agents
-that create durable side effects. Use it when retries, resumptions, cancellation,
-or lost acknowledgements can leave the business world in an invalid state.
+**Your agent said “refund complete.” Agent Effects found two refunds.**
 
-> A refund commits.<br>
-> Its acknowledgement is lost.<br>
-> The agent retries.<br>
-> Two refunds exist.<br>
-> Agent Effects detects the invalid business state and reduces the failure into
-> a reproducible regression case.
+A refund commits. Its acknowledgement is lost. The agent retries. Two refunds
+exist. Agent Effects injects that exact commit-boundary failure, checks the final
+business state, and reduces the failure into a reproducible regression case.
 
-Try the explicit lost-acknowledgement demonstration without an API key or model
-call:
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-lost-ack-dark.svg">
+  <img src="docs/assets/hero-lost-ack-light.svg" alt="Transaction diagram: a refund request durably commits, its acknowledgement is lost, the agent retries and creates a second refund; Agent Effects observes two instead of one and reduces the counterexample to one order and one fault.">
+</picture>
+
+Copy, paste, and see the failure:
 
 ```bash
 python -m pip install \
-  https://github.com/eschmidt01/agent-effects-testkit/releases/download/v0.1.0a1/agent_effects_testkit-0.1.0a1-py3-none-any.whl
-agent-effects init ./lost-ack-demo --template lost-ack
-cd lost-ack-demo
-pytest -q  # intentionally fails with a duplicate-effect contract violation
+  "agent-effects-testkit @ git+https://github.com/eschmidt01/agent-effects-testkit@main"
+agent-effects demo --agent naive --report
+# expected 1 refund
+# observed 2 refunds
+# report: .agent-effects/failures/refund-lost-ack-…-report.html
 ```
 
-The alpha does not provide an agent framework, hosted service, model judge,
-runtime idempotency layer, or sandbox for installed reproducer code.
-
-AI agents do not only produce text. They create refunds, send messages, update
-cases, mutate infrastructure, and resume long-running work. A response can look
-correct while the underlying world is wrong—for example, a refund succeeds, its
-acknowledgement times out, and the agent retries into a duplicate refund.
-
-Agent Effects Testkit exercises those failures as deterministic software tests:
-
-```text
-valid initial world
-× actor and permissions
-× goal
-× commit-aware fault schedule
-→ run the agent
-→ inspect final state and trace
-→ enforce deterministic contracts
-→ reduce the failure to a portable, same-signature reproduction
-```
-
-The alpha intentionally focuses on a narrow, high-value primitive:
-
-- **commit-aware faults** such as timeout-before-commit and
-  timeout-after-commit;
-- **outcome contracts** over business state, authorization, privacy, and
-  idempotency;
-- **validity-preserving shrinking** of faults and world data;
-- **integrity-checked failure bundles** for CI artifacts and regression tests;
-- **framework-neutral adapters**, starting with ordinary Python callables.
-
-It is not another prompt-scoring dashboard, LLM judge, agent orchestrator, or
-runtime idempotency product. It complements those systems by turning ambiguous
-side-effect behavior into a small deterministic test case.
-
-## Status
-
-`0.1.0a1` is an experimental public alpha for deterministic pre-production
-testing of AI-agent side effects. The core abstractions,
-structured runner lifecycle, portable schemas, hierarchical reduction, guarded
-starter projects, and integrity-checked failure bundles are implemented and
-tested locally. The Python 3.11–3.13 remote-CI matrix, GitHub prerelease, and
-public-wheel clean-room workflow have passed; independent external adoption
-remains open. This is not a company-ready or generally production-ready claim. See
-[`docs/RESEARCH_VALIDATION.md`](docs/RESEARCH_VALIDATION.md) and
-[`docs/RESEARCH_EVIDENCE.md`](docs/RESEARCH_EVIDENCE.md) for the online
-research behind this scope, [`VALIDATION_REPORT.md`](VALIDATION_REPORT.md)
-for the reproducible local verification record, and [`TASKS.md`](TASKS.md) for
-agent-ready work.
-
-## Sixty-second demo
-
-Python 3.11–3.13 is supported.
+Open the printed report path in any browser. The naive demo intentionally exits
+with status `1`; stable idempotency and reconciliation pass:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e '.[dev]'
-
-# Expected to fail and write a bundle containing a reduced case.
-agent-effects demo --agent naive
-
-# Different safe recovery strategies; both should pass.
 agent-effects demo --agent idempotent
 agent-effects demo --agent reconcile
-
-pytest
-
-# Verify internal consistency, inspect, and reproduce the emitted bundle.
-agent-effects bundle verify .agent-effects/failures/<bundle>
-agent-effects bundle inspect .agent-effects/failures/<bundle>
-agent-effects reproduce --dry-run .agent-effects/failures/<bundle>
-agent-effects reproduce .agent-effects/failures/<bundle>
-
-# Export stable v1alpha1 JSON Schemas.
-agent-effects schema export --output ./schemas
 ```
 
-The naive agent returns a success message but leaves two refunds after a lost
-acknowledgement. The testkit catches the incorrect final state and reduces an
-initially noisy case to the essential fault:
+**No API key. No model call. No hosted service.**
 
-```yaml
-operation: issue_refund
-occurrence: 1
-mode: timeout_after_commit
-```
+![Terminal demonstration of the naive refund policy committing twice after a lost acknowledgement, followed by generation of a local static failure report.](docs/assets/agent-effects-demo.gif)
 
-The bundle commands use complete SHA-256 hashes and cross-file identities to
-check integrity relative to the manifest and internal consistency. Unsigned
-hashes do not authenticate the author or establish provenance. Verification is
-local, executes no code, and needs no model key or network connection.
-`reproduce --dry-run` identifies the installed reproducer without executing it;
-`reproduce` crosses that boundary and runs registered installed code.
+Agent Effects Testkit is the formal repository and Python distribution name. It
+is for applied-AI, reliability, and platform engineers whose agents create
+payments, messages, cases, infrastructure changes, or other durable effects.
 
-Generate a passing project to adapt, or the explicit lost-ack demonstration:
+## What the report shows
+
+The standalone HTML report turns a bundle into a reviewable CI artifact:
 
 ```bash
-agent-effects init ./my-agent-tests
-agent-effects init ./lost-ack-demo --template lost-ack
+agent-effects bundle report <bundle> --output report.html
+agent-effects bundle report <bundle> --open
 ```
 
-## Public API example
+It includes the expected and observed state, injected fault, ordered events,
+durable commit markers, contract violations, structured state diff, reduction
+guarantee, reproduction commands, and collapsible verified JSON. Report
+generation verifies the bundle and executes no reproducer code.
+
+[View the synthetic lost-ack report](https://eschmidt01.github.io/agent-effects-testkit/reports/refund-lost-ack.html)
+or read the [report guide](docs/REPORTS.md).
+
+## Where it fits
+
+These categories answer different questions and can be used together. The
+distinctions describe testing methods, not claims about specific vendors.
+
+| Category | Primary question | Typical evidence | What it does not establish alone |
+| --- | --- | --- | --- |
+| Response evaluation | Was the answer relevant, correct, or well formed? | Text, structured output, scores | Whether a durable side effect committed once |
+| Trace inspection | What calls, spans, and decisions occurred? | Events, spans, tool inputs/results | Whether the final business state satisfies an invariant |
+| Transport fault injection | Does the system tolerate latency, disconnects, and HTTP failures? | Network behavior, retries, status codes | Whether a timeout happened before or after a business commit |
+| Final-state transaction testing | What world did the agent leave behind after an ambiguous commit? | Initial/final snapshots, commit markers, deterministic contracts | General response quality or production runtime enforcement |
+
+Agent Effects focuses on the last row while exporting the trace and fault data
+needed to connect it to the others.
+
+## Public API
 
 ```python
 from agent_effects.examples.refund import (
@@ -144,9 +87,7 @@ from agent_effects.pytest_plugin import assert_contracts
 
 def test_refund_agent_survives_lost_ack(agent_effects_runner) -> None:
     result = agent_effects_runner.run_sync(
-        case=make_refund_case(
-            fault_mode=FaultMode.TIMEOUT_AFTER_COMMIT,
-        ),
+        case=make_refund_case(fault_mode=FaultMode.TIMEOUT_AFTER_COMMIT),
         world_factory=RefundWorld,
         agent=AGENTS["idempotent"],
         contracts=REFUND_CONTRACTS,
@@ -154,7 +95,7 @@ def test_refund_agent_survives_lost_ack(agent_effects_runner) -> None:
     assert_contracts(result)
 ```
 
-A world adapter marks the exact business commit boundary:
+The world adapter marks the exact durable business commit:
 
 ```python
 async with self.faults.operation("issue_refund", payment_id=payment_id) as effect:
@@ -163,111 +104,117 @@ async with self.faults.operation("issue_refund", payment_id=payment_id) as effec
     return refund
 ```
 
-That lets the testkit distinguish:
+That distinction matters:
 
-- **timeout before commit:** retry may be necessary;
-- **timeout after commit:** the effect happened, but the agent does not know it.
+- `timeout_before`: the operation did not commit; retry may be necessary.
+- `timeout_after_commit`: the effect exists, but the agent did not receive its
+  acknowledgement; a blind retry may duplicate it.
 
-## Repository map
+## Install and start a project
+
+Python 3.11–3.13 is supported. Until `0.1.0a2` is tagged, install from `main` as
+shown above or use a source checkout. The existing `0.1.0a1` GitHub prerelease
+does not include the visual report command.
+
+```bash
+agent-effects init ./my-agent-tests
+cd my-agent-tests
+pytest -q
+```
+
+The normal starter passes. The explicit lost-ack template intentionally fails,
+writes a reduced bundle, and documents the stable-idempotency fix:
+
+```bash
+agent-effects init ./lost-ack-demo --template lost-ack
+cd lost-ack-demo
+pytest -q
+```
+
+Continue with the [five-minute overview and quickstart](docs/GETTING_STARTED.md),
+[wrap an existing callable](docs/WRAPPING_CALLABLES.md),
+[model a commit boundary](docs/COMMIT_BOUNDARIES.md), and
+[write deterministic contracts](docs/CONTRACTS.md).
+
+## Portable failure workflow
+
+```bash
+agent-effects bundle verify .agent-effects/failures/<bundle>
+agent-effects bundle inspect .agent-effects/failures/<bundle>
+agent-effects bundle report .agent-effects/failures/<bundle> --open
+agent-effects reproduce --dry-run .agent-effects/failures/<bundle>
+agent-effects reproduce .agent-effects/failures/<bundle>
+agent-effects schema export --output ./schemas
+```
+
+`verify`, `inspect`, `report`, and `reproduce --dry-run` execute no reproducer
+code. `reproduce` crosses that boundary and executes installed registered code.
+Unsigned bundle hashes verify file integrity relative to the manifest and
+internal consistency; they do not authenticate the author or provenance.
+
+## Scope and status
+
+[![CI](https://github.com/eschmidt01/agent-effects-testkit/actions/workflows/ci.yml/badge.svg)](https://github.com/eschmidt01/agent-effects-testkit/actions/workflows/ci.yml)
+[![Python 3.11–3.13](https://img.shields.io/badge/python-3.11%E2%80%933.13-3776AB.svg)](https://www.python.org/downloads/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Version: 0.1.0a2](https://img.shields.io/badge/version-0.1.0a2-orange.svg)](CHANGELOG.md)
+
+`0.1.0a2` is an experimental public alpha for deterministic pre-production
+testing of AI-agent side effects. It is not production-ready, company-ready, or
+a formal safety proof.
+
+The current alpha provides:
+
+- explicit `timeout_before` and `timeout_after_commit` fault injection;
+- deterministic state and trace contracts;
+- sync/async callable adapters and pytest integration;
+- validity- and same-signature-preserving hierarchical reduction;
+- integrity-checked, portable failure bundles and static HTML reports; and
+- API-key-free starter and lost-ack demos.
+
+It does not provide:
+
+- agent orchestration, model routing, or prompt scoring;
+- a hosted dashboard, telemetry, or model judge;
+- production idempotency, authorization, or transaction enforcement;
+- a sandbox for installed reproducer code; or
+- framework integrations yet, including LangGraph.
+
+Independent external onboarding remains the strongest open adoption gate. See
+the [roadmap](docs/ROADMAP.md), [research limitations](docs/RESEARCH_VALIDATION.md),
+and [validation record](VALIDATION_REPORT.md).
+
+## Architecture at a glance
 
 ```text
-src/agent_effects/
-├── faults.py          # Commit-aware semantic failure injection
-├── contracts.py       # Deterministic outcome contracts
-├── runner.py          # Isolated trial lifecycle
-├── shrink.py          # Validity-preserving counterexample reduction
-├── artifacts.py       # Portable failure bundles
-├── protocols.py       # Framework-neutral extension interfaces
-├── pytest_plugin.py   # Direct pytest assertion helper
-└── examples/refund.py # Complete lost-acknowledgement reference domain
-
-src/agent_effects_pytest.py # Minimal auto-loaded pytest fixture shim
-
-docs/
-├── RESEARCH_VALIDATION.md
-├── PRODUCT_SPEC.md
-├── ARCHITECTURE.md
-├── TESTING_STRATEGY.md
-├── THREAT_MODEL.md
-├── ROADMAP.md
-├── FAILURE_BUNDLE_SPEC.md
-├── INTEGRATION_GUIDE.md
-├── adr/
-└── agent/             # Instructions and handoff process for coding agents
+valid initial world + actor + goal + commit-aware fault
+                         ↓
+              run the existing agent
+                         ↓
+        snapshot final world + portable trace
+                         ↓
+             deterministic contracts
+                         ↓
+      same-signature reduced bundle + HTML report
 ```
 
-## Design principles
+Core source remains framework-neutral under `src/agent_effects/`; the refund
+domain in `src/agent_effects/examples/refund.py` is the executable reference
+specification. Contributors and coding agents should start with
+[`CONTRIBUTING.md`](CONTRIBUTING.md), [`AGENTS.md`](AGENTS.md), and
+[`TASKS.md`](TASKS.md).
 
-1. **Final state over persuasive prose.** A successful-looking answer is not a
-   successful transaction.
-2. **Deterministic checks before model judges.** Business invariants should be
-   code whenever code can express them.
-3. **Multiple safe trajectories are valid.** Contracts specify acceptable
-   outcomes, not one brittle sequence of tool calls.
-4. **Faults describe business semantics.** A generic HTTP timeout is not enough;
-   commit position changes the correct recovery behavior.
-5. **Generated worlds must remain valid.** Shrinking may not create impossible
-   foreign-key relationships or nonsensical authorization states.
-6. **A failure should become a regression test.** Every result is local,
-   inspectable, versioned JSON—not trapped in a hosted dashboard.
-7. **No required network or model key.** The core, demos, and CI are fully
-   deterministic and local-first.
+## Security, privacy, and contribution
 
-## Current non-goals
-
-The alpha does not attempt to provide:
-
-- agent orchestration or model routing;
-- prompt management or general response-quality scoring;
-- a hosted observability platform;
-- a replacement for runtime idempotency and authorization controls;
-- a universal mock of every SaaS provider;
-- automatic execution of untrusted agent code in a secure sandbox;
-- a custom contract DSL before the Python API has real adoption evidence.
-
-## Development
-
-With `uv`:
-
-```bash
-uv sync --extra dev
-uv run pytest
-uv run ruff check .
-uv run ruff format --check .
-uv run mypy
-```
-
-Without `uv`:
-
-```bash
-pip install -e '.[dev]'
-make check
-```
-
-The optional Hypothesis suite is enabled by the `dev` or `hypothesis` extra.
-The deterministic suite remains runnable without it.
-
-## Working with coding agents
-
-Start with [`AGENTS.md`](AGENTS.md), then read:
-
-1. [`TASKS.md`](TASKS.md)
-2. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-3. [`docs/agent/IMPLEMENTATION_PLAN.md`](docs/agent/IMPLEMENTATION_PLAN.md)
-4. the ADR relevant to the task
-
-Agents should implement one acceptance-tested task at a time and leave a handoff
-entry using [`docs/agent/SESSION_CHECKLIST.md`](docs/agent/SESSION_CHECKLIST.md).
-
-## Contributing and security
-
-Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request. Please
-report security issues according to [`SECURITY.md`](SECURITY.md), especially if
-a failure bundle can leak sensitive test or production data.
+Bundles and reports can contain world state, tool arguments, and identifiers.
+Core performs no automatic redaction in this alpha; adapters own redaction and
+users must review artifacts before sharing them. Read the
+[security boundaries](docs/THREAT_MODEL.md) and report vulnerabilities through
+the [private security-advisory flow](SECURITY.md).
 
 Use the [issue tracker](https://github.com/eschmidt01/agent-effects-testkit/issues)
-for bugs and feature requests, or submit the voluntary
-[alpha adoption report](https://github.com/eschmidt01/agent-effects-testkit/issues/new?template=alpha_adoption_report.yml)
-after a clean-room trial.
+for bugs and focused proposals. Early users can submit a voluntary
+[alpha adoption report](https://github.com/eschmidt01/agent-effects-testkit/issues/new?template=alpha_adoption_report.yml).
+The toolkit contains no hidden telemetry.
 
 Apache-2.0 licensed. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).

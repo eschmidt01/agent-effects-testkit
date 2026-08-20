@@ -101,6 +101,19 @@ Verification and inspection never execute code. Reproduction explicitly executes
 an installed, registered adapter and should be used only in a suitably isolated
 test environment.
 
+## Static report
+
+```bash
+agent-effects bundle report ./failure-bundle --output report.html
+agent-effects bundle report ./failure-bundle --open
+```
+
+The report is a derived artifact beside the bundle, not an unlisted payload
+inside it. Report generation runs full bundle verification, then renders a
+self-contained, script-free HTML view with a restrictive Content Security
+Policy. It never resolves or executes the registered reproducer. Bundle strings
+are HTML-escaped, but not redacted; review reports before sharing them.
+
 ## Privacy
 
 Bundles may contain sensitive world state and tool arguments. Core performs no

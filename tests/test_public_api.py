@@ -20,6 +20,8 @@ def test_public_api_exports_are_available() -> None:
     assert agent_effects.ReductionGuarantee.NO_MINIMALITY_CLAIM.value == ("no_minimality_claim")
     assert agent_effects.exactly_one_effect("effects").name == "exactly_one:effects"
     assert callable(agent_effects.export_schemas)
+    assert callable(agent_effects.render_bundle_report)
+    assert callable(agent_effects.write_bundle_report)
     assert "TrialRunner" in dir(agent_effects)
 
 

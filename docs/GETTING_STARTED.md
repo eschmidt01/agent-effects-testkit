@@ -28,7 +28,9 @@ Python 3.11–3.13 is supported.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install agent-effects-testkit==0.1.0a1 pytest
+pip install \
+  "agent-effects-testkit @ git+https://github.com/eschmidt01/agent-effects-testkit@main"
+pip install pytest
 agent-effects version
 ```
 
@@ -54,11 +56,12 @@ duplicate. The assertion shows the bundle path.
 ```bash
 agent-effects bundle verify .agent-effects/failures/<bundle>
 agent-effects bundle inspect .agent-effects/failures/<bundle>
+agent-effects bundle report .agent-effects/failures/<bundle> --open
 agent-effects reproduce --dry-run .agent-effects/failures/<bundle>
 agent-effects reproduce .agent-effects/failures/<bundle>
 ```
 
-`verify` and `inspect` parse data only. The dry run identifies installed
+`verify`, `inspect`, and `report` parse verified data only. The dry run identifies installed
 reproducer code without executing it. The final command executes that registered
 code and must reproduce the same typed failure signature.
 

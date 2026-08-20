@@ -6,10 +6,37 @@ changes with explicit migration notes.
 
 ## [Unreleased]
 
+### Added
+
+- Deterministic `agent-effects bundle report` HTML generation with `--output`
+  and local `--open` support
+- Self-contained failure view covering expected/observed state, fault schedule,
+  commit-aware timeline, violations, structured diff, reduction guarantee,
+  reproduction boundary, and collapsible raw JSON
+- HTML injection, tampering, local-file opening, and no-reproducer-resolution
+  security tests
+- `agent-effects demo --agent naive --report` visual failure workflow
+- Light/dark lost-ack diagrams, reproducible terminal GIF, report screenshot,
+  social preview, visual documentation home, and GitHub Pages workflow
+
+### Changed
+
+- Public message now leads with “Agent Effects — Test the world your AI agent
+  leaves behind,” while retaining Agent Effects Testkit as the formal package
+- Roadmap completes the visual report before the proposed single LangGraph
+  integration
+
+### Security
+
+- Report generation accepts only a fully verified bundle, escapes untrusted
+  strings, uses no remote assets or scripts, and emits a restrictive CSP
+- Reports warn that bundle content may be sensitive and redaction remains
+  adapter-owned
+
 ### Planned
 
-- One deep LangGraph integration after the observed remote-CI gate passes
-- External quickstart timing and design-partner validation
+- Independent clean-room onboarding and adoption feedback
+- One deep LangGraph integration after this pull request and a green remote CI
 
 ## [0.1.0a1] - 2026-08-19
 
