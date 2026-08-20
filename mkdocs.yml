@@ -6,43 +6,75 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  font: false
+  features:
+    - content.code.copy
+    - navigation.footer
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - search.suggest
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
 
 markdown_extensions:
   - attr_list
+  - md_in_html
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
-  - Getting started: GETTING_STARTED.md
-  - Static failure reports: REPORTS.md
-  - Wrap a callable: WRAPPING_CALLABLES.md
-  - Commit boundaries: COMMIT_BOUNDARIES.md
-  - Contracts: CONTRACTS.md
-  - Failure signatures: FAILURE_SIGNATURES.md
-  - Shrinking: SHRINKING.md
-  - Troubleshooting: TROUBLESHOOTING.md
-  - Alpha feedback: ALPHA_FEEDBACK.md
-  - Launch demo: LAUNCH_DEMO.md
-  - Community issues: COMMUNITY_ISSUES.md
-  - External onboarding: EXTERNAL_ONBOARDING.md
-  - Remote release procedure: REMOTE_RELEASE.md
-  - Research validation: RESEARCH_VALIDATION.md
-  - Public evidence: RESEARCH_EVIDENCE.md
-  - Product specification: PRODUCT_SPEC.md
-  - Architecture: ARCHITECTURE.md
-  - Integration guide: INTEGRATION_GUIDE.md
-  - Runner lifecycle: RUNNER_LIFECYCLE.md
-  - Schema versioning: SCHEMA_VERSIONING.md
-  - Failure bundles: FAILURE_BUNDLE_SPEC.md
-  - Testing strategy: TESTING_STRATEGY.md
-  - Threat model: THREAT_MODEL.md
-  - Repository security audit: SECURITY_AUDIT.md
-  - Competitive landscape: COMPETITIVE_LANDSCAPE.md
-  - Roadmap: ROADMAP.md
-  - Branding: BRANDING.md
-  - ADRs:
-      - Narrow product scope: adr/0001-narrow-side-effect-testing.md
-      - Outcome contracts: adr/0002-outcome-contracts-not-exact-traces.md
-      - Commit-aware faults: adr/0003-commit-aware-faults.md
-      - Valid shrinking: adr/0004-validity-preserving-shrinking.md
-      - Future LangGraph integration: adr/0005-future-langgraph-integration.md
-  - Agent handoff: agent/HANDOFF.md
+  - Get started:
+      - Five-minute quickstart: GETTING_STARTED.md
+      - Wrap a callable: WRAPPING_CALLABLES.md
+      - Model commit boundaries: COMMIT_BOUNDARIES.md
+      - Write contracts: CONTRACTS.md
+  - Guides:
+      - Static failure reports: REPORTS.md
+      - Failure signatures: FAILURE_SIGNATURES.md
+      - Shrinking: SHRINKING.md
+      - Troubleshooting: TROUBLESHOOTING.md
+      - Integration guide: INTEGRATION_GUIDE.md
+  - Reference:
+      - Architecture: ARCHITECTURE.md
+      - Runner lifecycle: RUNNER_LIFECYCLE.md
+      - Failure bundles: FAILURE_BUNDLE_SPEC.md
+      - Schema versioning: SCHEMA_VERSIONING.md
+      - Testing strategy: TESTING_STRATEGY.md
+      - Threat model: THREAT_MODEL.md
+      - Repository security audit: SECURITY_AUDIT.md
+      - Product specification: PRODUCT_SPEC.md
+  - Project:
+      - Alpha feedback: ALPHA_FEEDBACK.md
+      - External onboarding: EXTERNAL_ONBOARDING.md
+      - Roadmap: ROADMAP.md
+      - Research validation: RESEARCH_VALIDATION.md
+      - Public evidence: RESEARCH_EVIDENCE.md
+      - Competitive landscape: COMPETITIVE_LANDSCAPE.md
+      - Launch demo: LAUNCH_DEMO.md
+      - Community issues: COMMUNITY_ISSUES.md
+      - Remote release procedure: REMOTE_RELEASE.md
+      - Branding: BRANDING.md
+      - Agent handoff: agent/HANDOFF.md
+      - ADRs:
+          - Narrow product scope: adr/0001-narrow-side-effect-testing.md
+          - Outcome contracts: adr/0002-outcome-contracts-not-exact-traces.md
+          - Commit-aware faults: adr/0003-commit-aware-faults.md
+          - Valid shrinking: adr/0004-validity-preserving-shrinking.md
+          - Future LangGraph integration: adr/0005-future-langgraph-integration.md

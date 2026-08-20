@@ -216,6 +216,10 @@ steps. It must consume the portable bundle and have no server or account.
   boundary.
 - [x] The packaged naive demo emits a report while preserving exit status `1`.
 - [x] A synthetic report and reproducible visual assets are published in docs.
+- [x] The documentation site, report, diagrams, and terminal recording share a
+  restrained, environment-neutral visual system and pass rendered browser QA.
+- [x] The public Pages deployment is observable before the visual-report pull
+  request is merged.
 
 ### AE-202: Domain scaffold command
 

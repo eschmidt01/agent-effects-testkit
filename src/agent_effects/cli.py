@@ -45,6 +45,17 @@ app.add_typer(bundle_app, name="bundle")
 app.add_typer(schema_app, name="schema")
 
 
+def _display_path(path: Path) -> str:
+    """Render paths under the working directory without leaking machine-specific prefixes."""
+
+    resolved = path.resolve()
+    try:
+        relative = resolved.relative_to(Path.cwd().resolve())
+    except ValueError:
+        return str(resolved)
+    return relative.as_posix()
+
+
 @app.command()
 def version() -> None:
     console.print(__version__)
@@ -181,7 +192,10 @@ def bundle_report_command(
         report_path = write_bundle_report(bundle, destination)
     except (ValueError, OSError) as exc:
         raise typer.BadParameter(str(exc)) from exc
-    console.print(f"[green]report[/]: {report_path} (verified bundle; no reproducer code executed)")
+    console.print(
+        f"[green]report[/]: {_display_path(report_path)} "
+        "(verified bundle; no reproducer code executed)"
+    )
     if open_report:
         import webbrowser
 
@@ -351,12 +365,12 @@ def demo(
                 str(minimized_noise_count),
             )
         if artifact_path is not None:
-            table.add_row("Failure bundle", str(artifact_path))
+            table.add_row("Failure bundle", _display_path(artifact_path))
         console.print(table)
         if report_path is not None:
             console.print("expected 1 refund", soft_wrap=True)
             console.print(f"observed {refund_count} refunds", soft_wrap=True)
-            console.print(f"report: {report_path}", soft_wrap=True)
+            console.print(f"report: {_display_path(report_path)}", soft_wrap=True)
         return 0 if result.passed else 1
 
     try:

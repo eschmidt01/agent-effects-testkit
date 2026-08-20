@@ -1,8 +1,8 @@
 # Implementation handoff
 
 Task: AE-201 — `v0.1.0a2` visual failure report
-Status: locally complete on `feat/visual-failure-report`; pull-request CI and
-review remain release gates
+Status: complete on `feat/visual-failure-report`; pull-request review remains a
+release gate
 
 Changed:
 
@@ -16,8 +16,14 @@ Changed:
 - bumped the candidate package version to `0.1.0a2` without tagging or release;
 - redesigned the README/docs around “Test the world your AI agent leaves
   behind” and category-level positioning;
-- added light/dark transaction SVGs, reproducible 25-second terminal GIF,
-  report screenshot, social preview, public synthetic report, and provenance;
+- added flat light/dark transaction traces, reproducible 20.68-second terminal
+  GIF, report screenshot, social preview, public synthetic report, and
+  provenance;
+- replaced the initial marketing-heavy visual treatment with a restrained
+  GitHub-style documentation system using system fonts, neutral surfaces,
+  crisp borders, grouped navigation, and accessible status colors;
+- removed an unfinished terminal command and local absolute path from the GIF,
+  with a CLI regression test for working-directory-relative artifact display;
 - added a least-privilege GitHub Pages workflow, community issue drafts, and
   launch-demo script; and
 - reordered the roadmap so the visual report precedes the single proposed
@@ -26,10 +32,10 @@ Changed:
 Validation:
 
 - `ruff check .` → passed;
-- `ruff format --check .` → 101 files already formatted;
+- `ruff format --check .` → 99 files already formatted;
 - `mypy --strict src tests` → passed, 44 source files;
-- `pytest` → 130 passed;
-- branch coverage → 91.61%, above the unchanged 90% floor;
+- `pytest` → 132 passed;
+- branch coverage → 91.64%, above the unchanged 90% floor;
 - `mkdocs build --strict` → passed;
 - `python -m compileall -q src tests examples scripts` → passed;
 - `uv build` → `0.1.0a2` sdist and wheel built;
@@ -48,8 +54,8 @@ Decisions:
 - no report code imports reproduction or entry-point discovery;
 - the renderer shows the bundle's toolkit version rather than claiming the
   current renderer created the original failure; and
-- Pages deploys only from `main`; this feature branch does not change that
-  repository setting or publish a site.
+- Pages deploys from `main` and the visual-report branch so the draft can be
+  reviewed at the public documentation URL without merging it.
 
 Risks / unresolved:
 
@@ -62,13 +68,13 @@ Risks / unresolved:
   so Chrome visual validation used a loopback-only server with exactly one
   document request; unit tests cover local file URI opening and zero report
   subresources;
-- GitHub Pages must be enabled for GitHub Actions after the pull request is
-  merged if the repository setting is not already enabled; and
+- the feature-branch Pages trigger should be removed after merge if the branch
+  is retained rather than deleted; and
 - no external engineer has completed an independent onboarding attempt.
 
 Next:
 
-- review and merge only after pull-request CI is green;
-- enable/verify GitHub Pages and set the prepared social preview manually;
+- review and merge only after pull-request CI and Pages are green;
+- set the prepared social preview manually in repository settings;
 - collect one independent onboarding/adoption report and file findings; then
 - begin only the scoped optional LangGraph `0.2.0a1` milestone from ADR 0005.
