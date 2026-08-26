@@ -38,7 +38,7 @@ jobs:
           uv run python scripts/generate_failure_report.py
           git diff --exit-code -- docs/reports/refund-lost-ack.html
       - run: uv run mkdocs build --strict --site-dir site
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site
