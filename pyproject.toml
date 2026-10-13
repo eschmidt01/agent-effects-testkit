@@ -54,7 +54,7 @@ dev = [
   "pytest-cov>=5,<8",
   "ruff>=0.15,<1",
   "types-jsonschema>=4.23,<5",
-  "twine>=6,<7",
+  "twine>=6,<8",
 ]
 docs = ["mkdocs-material>=9.5,<10"]
 
